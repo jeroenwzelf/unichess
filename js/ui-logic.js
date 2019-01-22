@@ -37,6 +37,16 @@ var highlight = function(square) {
 	squareEl.addClass('highlight-' + (turn % 4));
 }
 
+var kingcheck = function(square) {
+	var squareEl = $('#board .square-' + square);
+	squareEl.addClass('highlight-king');
+}
+
+var removeKingCheck = function(square) {
+	var squareEl = $('#board .square-' + square);
+	squareEl.removeClass('highlight-king');	
+}
+
 var removeGreySquares = function() {
   $('#board .square-55d63').css('background', '');
 };

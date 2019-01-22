@@ -1,13 +1,13 @@
 var board;
 var turn = 0;
 var selectedSquare;
+var playerState = [
+	{ kingPos: 'h1', inCheck: false },
+	{ kingPos: 'n8', inCheck: false },
+	{ kingPos: 'h14', inCheck: false },
+	{ kingPos: 'a8', inCheck: false }
+];
 
-/*var players = [
-	player1 = {
-		id = 1,
-
-	}
-];*/
 
 
 // starting 4 player position
@@ -18,6 +18,7 @@ var position = {
 	n4: 'rR', n5: 'rN', n6: 'rB', n7: 'rQ', n8: 'rK', n9: 'rB', n10: 'rN', n11: 'rR', m4: 'rP', m5: 'rP', m6: 'rP', m7: 'rP', m8: 'rP', m9: 'rP', m10: 'rP', m11: 'rP',
 };
 
+var currentPosition = position;
 var moved_pieces = position;
 
 function initialize() {
@@ -26,6 +27,7 @@ function initialize() {
 		position: position,
 		onDragStart: onDragStart,
 		onDrop: onDrop,
+		onChange: onChange
 	};
 	board = ChessBoard('board', cfg);
 	updateCurrrentPlayer(turn);
@@ -56,10 +58,27 @@ var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 
 	delete moved_pieces[source];
 
+	if (piece[1] === 'K') playerState[getPlayerColor(piece[0])].kingPos = target;
+
 	addMoveToMoveList(target);
 	turn++;
 	updateCurrrentPlayer(turn % 4);
+	currentPosition = newPos;
+
+	calculateInChecks(newPos);
 };
+
+var onChange = function(oldPos, newPos) {
+}
+
+function getPlayerColor(player) {
+	switch (player) {
+		case "w": return 0;
+		case "r": return 1;
+		case "b": return 2;
+		case "g": return 3;
+	}
+}
 
 function previousPlayer(player) {
 	var prev = player - 1;

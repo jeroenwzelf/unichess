@@ -1,36 +1,38 @@
+var currentPieceColor;
+
 function up(square) {
-	switch(turn % 4) {
-		case 0: return squareUp(square);
-		case 1: return squareLeft(square);
-		case 2: return squareDown(square);
-		case 3: return squareRight(square);
+	switch(currentPieceColor) {
+		case 'w': return squareUp(square);
+		case 'r': return squareLeft(square);
+		case 'b': return squareDown(square);
+		case 'g': return squareRight(square);
 	}
 }
 
 function down(square) {
-	switch(turn % 4) {
-		case 0: return squareDown(square);
-		case 1: return squareRight(square);
-		case 2: return squareUp(square);
-		case 3: return squareLeft(square);
+	switch(currentPieceColor) {
+		case 'w': return squareDown(square);
+		case 'r': return squareRight(square);
+		case 'b': return squareUp(square);
+		case 'g': return squareLeft(square);
 	}
 }
 
 function left(square) {
-	switch(turn % 4) {
-		case 0: return squareLeft(square);
-		case 1: return squareDown(square);
-		case 2: return squareRight(square);
-		case 3: return squareUp(square);
+	switch(currentPieceColor) {
+		case 'w': return squareLeft(square);
+		case 'r': return squareDown(square);
+		case 'b': return squareRight(square);
+		case 'g': return squareUp(square);
 	}
 }
 
 function right(square) {
-	switch(turn % 4) {
-		case 0: return squareRight(square);
-		case 1: return squareUp(square);
-		case 2: return squareLeft(square);
-		case 3: return squareDown(square);
+	switch(currentPieceColor) {
+		case 'w': return squareRight(square);
+		case 'r': return squareUp(square);
+		case 'b': return squareLeft(square);
+		case 'g': return squareDown(square);
 	}
 }
 
@@ -52,14 +54,7 @@ function validMoves(position, source) {
 	var piece = position[source];
 	if (piece !== null) {
 		// valid moves for specific pieces
-		switch (piece[1]) {
-			case "P": moves.push.apply(moves, pawn(position, source)); break;
-			case "N": moves.push.apply(moves, knight(position, source)); break;
-			case "K": moves.push.apply(moves, king(position, source)); break;
-			case "Q":
-			case "B": moves.push.apply(moves, bishop(position, source)); if (piece[1] === "B") break;
-			case "R": moves.push.apply(moves, rook(position, source)); break;
-		}
+		moves = validMovesForPiece(position, source);
 
 		var i = moves.length;
 		while (i--) {
@@ -73,23 +68,55 @@ function validMoves(position, source) {
 	return moves;
 }
 
-function isEnemy(square) {
-	if (!square) return;
-	switch (turn % 4) {
-		case 0: if (square[0] === 'w') return false; break;
-		case 1: if (square[0] === 'r') return false; break;
-		case 2: if (square[0] === 'b') return false; break;
-		case 3: if (square[0] === 'g') return false; break;
-	}
+function isEnemyOf(piece, enemy) {
+	if (!enemy || !piece) return;
+	if (enemy[0] === piece[0]) return false;
 	return true;
 }
 
-function isInCheck(position) {
-
+function calculateInChecks(position) {
+	// clean all checks
+	for (var state in playerState) {
+		playerState[state].inCheck = false;
+		removeKingCheck(playerState[state].kingPos);
+	}
+	// search for checks
+	for (var square in position) {
+		var moves = validMovesForPiece(position, square);
+		var i = moves.length;
+		while (i--) {
+			var move = moves[i];
+			// check if this move would take any king
+			for (var player = 0; player < 4; player++) {
+				var attackingPiece = position[square];
+				var king = position[playerState[player].kingPos];
+				if (attackingPiece[0] !== king[0] && position[move] === king) {
+					kingcheck(playerState[player].kingPos);
+					playerState[player].inCheck = true;
+				}
+			}
+		}
+	}
 }
 
 function preventsCheck(position, move) {
 
+}
+
+function validMovesForPiece(position, source) {
+	var moves = [];
+	var piece = position[source];
+	currentPieceColor = piece[0];
+	switch (piece[1]) {
+		case "P": moves.push.apply(moves, pawn(position, source)); break;
+		case "N": moves.push.apply(moves, knight(position, source)); break;
+		case "K": moves.push.apply(moves, king(position, source)); break;
+		case "Q":
+		case "B": moves.push.apply(moves, bishop(position, source)); if (piece[1] === "B") break;
+		case "R": moves.push.apply(moves, rook(position, source)); break;
+	}
+	currentPieceColor = null;
+	return moves;
 }
 
 function pawn(position, source) {
@@ -106,10 +133,10 @@ function pawn(position, source) {
 
 	// take enemy on the left
 	var takeLeft = left(forwardMove);
-	if (isEnemy(position[takeLeft])) moves.push(takeLeft);
+	if (isEnemyOf(position[source], position[takeLeft])) moves.push(takeLeft);
 	// take enemy on the right
 	var takeRight = right(forwardMove);
-	if (isEnemy(position[takeRight])) moves.push(takeRight);
+	if (isEnemyOf(position[source], position[takeRight])) moves.push(takeRight);
 
 	// en passent
 	return moves;
@@ -160,32 +187,32 @@ function bishop(position, source) {
 
 	var foundEnemy = false;
 	var upMove = up(left(source));
-	while (!foundEnemy && typeof upMove !== 'undefined' && (typeof position[upMove] === 'undefined' || isEnemy(position[upMove]))) {
-		if (isEnemy(position[upMove])) foundEnemy = true;
+	while (!foundEnemy && typeof upMove !== 'undefined' && (typeof position[upMove] === 'undefined' || isEnemyOf(position[source], position[upMove]))) {
+		if (isEnemyOf(position[source], position[upMove])) foundEnemy = true;
 		moves.push(upMove);
 		upMove = up(left(upMove));
 	}
 
 	foundEnemy = false;
 	var downMove = down(right(source));
-	while (!foundEnemy && typeof downMove !== 'undefined' && (typeof position[downMove] === 'undefined' || isEnemy(position[downMove]))) {
-		if (isEnemy(position[downMove])) foundEnemy = true;
+	while (!foundEnemy && typeof downMove !== 'undefined' && (typeof position[downMove] === 'undefined' || isEnemyOf(position[source], position[downMove]))) {
+		if (isEnemyOf(position[source], position[downMove])) foundEnemy = true;
 		moves.push(downMove);
 		downMove = down(right(downMove));
 	}
 
 	foundEnemy = false;
 	var leftMove = left(down(source));
-	while (!foundEnemy && typeof leftMove !== 'undefined' && (typeof position[leftMove] === 'undefined' || isEnemy(position[leftMove]))) {
-		if (isEnemy(position[leftMove])) foundEnemy = true;
+	while (!foundEnemy && typeof leftMove !== 'undefined' && (typeof position[leftMove] === 'undefined' || isEnemyOf(position[source], position[leftMove]))) {
+		if (isEnemyOf(position[source], position[leftMove])) foundEnemy = true;
 		moves.push(leftMove);
 		leftMove = left(down(leftMove));
 	}
 
 	foundEnemy = false;
 	var rightMove = right(up(source));
-	while (!foundEnemy && typeof rightMove !== 'undefined' && (typeof position[rightMove] === 'undefined' || isEnemy(position[rightMove]))) {
-		if (isEnemy(position[rightMove])) foundEnemy = true;
+	while (!foundEnemy && typeof rightMove !== 'undefined' && (typeof position[rightMove] === 'undefined' || isEnemyOf(position[source], position[rightMove]))) {
+		if (isEnemyOf(position[source], position[rightMove])) foundEnemy = true;
 		moves.push(rightMove);
 		rightMove = right(up(rightMove));
 	}	
@@ -198,32 +225,32 @@ function rook(position, source) {
 	
 	var foundEnemy = false;
 	var upMove = up(source);
-	while (!foundEnemy && typeof upMove !== 'undefined' && (typeof position[upMove] === 'undefined' || isEnemy(position[upMove]))) {
-		if (isEnemy(position[upMove])) foundEnemy = true;
+	while (!foundEnemy && typeof upMove !== 'undefined' && (typeof position[upMove] === 'undefined' || isEnemyOf(position[source], position[upMove]))) {
+		if (isEnemyOf(position[source], position[upMove])) foundEnemy = true;
 		moves.push(upMove);
 		upMove = up(upMove);
 	}
 
 	foundEnemy = false;
 	var downMove = down(source);
-	while (!foundEnemy && typeof downMove !== 'undefined' && (typeof position[downMove] === 'undefined' || isEnemy(position[downMove]))) {
-		if (isEnemy(position[downMove])) foundEnemy = true;
+	while (!foundEnemy && typeof downMove !== 'undefined' && (typeof position[downMove] === 'undefined' || isEnemyOf(position[source], position[downMove]))) {
+		if (isEnemyOf(position[source], position[downMove])) foundEnemy = true;
 		moves.push(downMove);
 		downMove = down(downMove);
 	}
 
 	foundEnemy = false;
 	var leftMove = left(source);
-	while (!foundEnemy && typeof leftMove !== 'undefined' && (typeof position[leftMove] === 'undefined' || isEnemy(position[leftMove]))) {
-		if (isEnemy(position[leftMove])) foundEnemy = true;
+	while (!foundEnemy && typeof leftMove !== 'undefined' && (typeof position[leftMove] === 'undefined' || isEnemyOf(position[source], position[leftMove]))) {
+		if (isEnemyOf(position[source], position[leftMove])) foundEnemy = true;
 		moves.push(leftMove);
 		leftMove = left(leftMove);
 	}
 
 	foundEnemy = false;
 	var rightMove = right(source);
-	while (!foundEnemy && typeof rightMove !== 'undefined' && (typeof position[rightMove] === 'undefined' || isEnemy(position[rightMove]))) {
-		if (isEnemy(position[rightMove])) foundEnemy = true;
+	while (!foundEnemy && typeof rightMove !== 'undefined' && (typeof position[rightMove] === 'undefined' || isEnemyOf(position[source], position[rightMove]))) {
+		if (isEnemyOf(position[source], position[rightMove])) foundEnemy = true;
 		moves.push(rightMove);
 		rightMove = right(rightMove);
 	}
