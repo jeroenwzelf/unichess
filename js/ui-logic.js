@@ -20,6 +20,21 @@ function addMoveToMoveList(move) {
 	cell.append(html);
 }
 
+var removeGreySquares = function() {
+  $('#board .square-55d63').css('background', '');
+};
+
+var greySquare = function(square) {
+  var squareEl = $('#board .square-' + square);
+  
+  var background = '#a9a9a9';
+  if (squareEl.hasClass('black-3c85d') === true) {
+    background = '#696969';
+  }
+
+  squareEl.css('background', background);
+};
+
 function playerToString(player) {
 	switch (player) {
 		case 0: return 'White';
