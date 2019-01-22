@@ -24,7 +24,6 @@
 .square-55d63 {
   float: left;
   position: relative;
-
   /* disable any native browser highlighting */
   -webkit-touch-callout: none;
     -webkit-user-select: none;

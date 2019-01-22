@@ -81,6 +81,14 @@ function isEnemy(square) {
 	return true;
 }
 
+function isInCheck(position) {
+	
+}
+
+function preventsCheck(position, move) {
+
+}
+
 function pawn(position, source) {
 	var moves = [];
 

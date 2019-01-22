@@ -1,5 +1,6 @@
 body {
 	padding: 20px;
+	background-color: black;
 }
 
 #table {
@@ -11,24 +12,28 @@ body {
  	box-sizing: border-box;
  }
 
- .caption {
- 	display: block;
- 	width: 100%;
- 	background: #64e0ef;
- 	height: 55px;
- 	padding-left: 10px;
- 	color: #fff;
- 	font-size: 20px;
- 	line-height: 55px;
- 	text-shadow: 1px 1px 1px rgba(0,0,0,.3);
- 	box-sizing: border-box;
- }
+.caption {
+	display: block;
+	width: 100%;
+	background: #333;
+	height: 55px;
+	padding-left: 10px;
+	color: #fff;
+	font-size: 20px;
+	line-height: 55px;
+	text-shadow: 1px 1px 1px rgba(0,0,0,.3);
+	box-sizing: border-box;
+}
 
+/*.playerw {
+	mix-blend-mode: multiply;
+	cursor: pointer;
+}*/
 
- .header-row {
- 	background: #8b8b8b;
- 	color: #fff;
- }
+.header-row {
+	background: #8b8b8b;
+	color: #fff;
+}
 
 .row {
 	display: table-row;

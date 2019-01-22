@@ -504,7 +504,7 @@ function buildPiece(piece, hidden, id) {
     html += 'id="' + id + '" ';
   }
   html += 'alt="" ' +
-  'class="' + CSS.piece + '" ' +
+  'class="' + CSS.piece + '' + '" ' +
   'data-piece="' + piece + '" ' +
   'style="width: ' + SQUARE_SIZE + 'px;' +
   'height: ' + SQUARE_SIZE + 'px;';

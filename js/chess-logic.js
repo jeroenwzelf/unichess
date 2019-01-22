@@ -1,6 +1,14 @@
 var board;
 var turn = 0;
 
+/*var players = [
+	player1 = {
+		id = 1,
+		
+	}
+];*/
+
+
 // starting 4 player position
 var position = {
 	d1: 'wR', e1: 'wN', f1: 'wB', g1: 'wQ', h1: 'wK', i1: 'wB', j1: 'wN', k1: 'wR', d2: 'wP', e2: 'wP', f2: 'wP', g2: 'wP', h2: 'wP', i2: 'wP', j2: 'wP', k2: 'wP',
