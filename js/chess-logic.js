@@ -1,5 +1,6 @@
 var board;
 var turn = 0;
+var selectedSquare;
 
 /*var players = [
 	player1 = {
@@ -31,19 +32,26 @@ function initialize() {
 }
 
 var onDragStart = function(source, piece, position, orientation) {
+	if (!isCurrentPlayerPiece(piece)) return false;
+	removeHighlights();
+	removeGreySquares();
+	
+	selectedSquare = source;
+	highlight(source);
+
 	var moves = validMoves(position, source);
-	if (moves.length === 0) return false;
-	for (var i=0; i < moves.length; i++) {
-		greySquare(moves[i]);
-	}
+	for (var i=0; i < moves.length; i++) greySquare(moves[i]);
 };
 
 var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
-	removeGreySquares();
+	if (source !== target) {
+		removeGreySquares();
+		removeHighlights();
+		selectedSquare = null;
+	}
+
 	var oldPosTarget = oldPos[target] ? oldPos[target] : ' ';
-	if ( (!board.validMove(source + '-' + target)) // moves are on the board
-		|| (oldPos[source][0] === oldPosTarget[0]) // moves to friendly piece
-		|| !(validMoves(oldPos, source).includes(target)) // is not a legal move
+	if ( !(validMoves(oldPos, source).includes(target)) // is not a legal move
 		) return 'snapback';
 
 	delete moved_pieces[source];

@@ -34,20 +34,23 @@ function right(square) {
 	}
 }
 
+function isCurrentPlayerPiece(piece) {
+	if (!piece) return false;
+	switch (turn % 4) {
+		case 0: if (piece.search(/^w/) === -1) return false; break;
+		case 1: if (piece.search(/^r/) === -1) return false; break;
+		case 2: if (piece.search(/^b/) === -1) return false; break;
+		case 3: if (piece.search(/^g/) === -1) return false; break;
+	}
+	return true;
+}
+
 function validMoves(position, source) {
 	var moves = [];
 
 	// there has to be a piece at source
 	var piece = position[source];
 	if (piece !== null) {
-		// piece has to be from current player
-		switch (turn % 4) {
-			case 0: if (piece.search(/^w/) === -1) return moves; break;
-			case 1: if (piece.search(/^r/) === -1) return moves; break;
-			case 2: if (piece.search(/^b/) === -1) return moves; break;
-			case 3: if (piece.search(/^g/) === -1) return moves; break;
-		}
-
 		// valid moves for specific pieces
 		switch (piece[1]) {
 			case "P": moves.push.apply(moves, pawn(position, source)); break;
@@ -82,7 +85,7 @@ function isEnemy(square) {
 }
 
 function isInCheck(position) {
-	
+
 }
 
 function preventsCheck(position, move) {

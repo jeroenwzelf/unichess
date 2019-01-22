@@ -28,6 +28,15 @@ function updateCurrrentPlayer(player) {
 	cell.css("background-color", "#666");
 }
 
+var removeHighlights = function() {
+	$('#board .square-55d63').removeClass('highlight-' + (turn % 4));
+}
+
+var highlight = function(square) {
+	var squareEl = $('#board .square-' + square);
+	squareEl.addClass('highlight-' + (turn % 4));
+}
+
 var removeGreySquares = function() {
   $('#board .square-55d63').css('background', '');
 };
