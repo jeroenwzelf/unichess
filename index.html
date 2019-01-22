@@ -6,6 +6,7 @@
 
 		<link rel="stylesheet" href="css/chessboard-0.3.0.css">
 		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" charset="utf-8"></script>
 		<script type="text/javascript" src="js/chessboard-0.3.0.js"></script>
 		<script type="text/javascript" src="js/ui-logic.js"></script>
@@ -14,23 +15,50 @@
 	</head>
 
 	<body>
+		<div class="topnav" id="myTopnav">
+			<!-- <a id="hamburgerButton" style="float: right;" href="javascript:void(0);" class="icon">
+				<i class="fa fa-bars"></i>
+				<span class="HideOnSmallWidth" style="">Moves</span>
+			</a> -->
+		</div>
 		<div style="display: flex; flex-flow: row;">
-			<div style="display: flex; flex-flow: column; padding-right: 40px; width: 20%;">
-				<div class="caption">Moves</div>
+			<div style="flex: auto;"></div>
+			<div id="board" style="width: 45%; padding: 20px;"></div>
+			<div style="flex: auto"></div>
+			<div id="MovesDiv" style="display: flex; flex-flow: column; padding-right: 0px; width: 20%; float: right;">
 				<div id="table">
-					<div class="header-row row">
-						<span class="cell primary">turn</span>
-						<span class="cell">White</span>
-						<span class="cell">Red</span>
-						<span class="cell">Black</span>
-						<span class="cell">Green</span>
+					<div class="header-row row HideOnMicroWidth">
+						<span class="cell primary">#</span>
+						<span class="cell" id="moveWhite">
+							<img src="img/chesspieces/wikipedia/wK.png" style="width: 100%;"></img>
+							<span class="HideOnSmallWidth">White</span>
+						</span>
+						<span class="cell" id="moveRed">
+							<img src="img/chesspieces/wikipedia/rK.png" style="width: 100%;"></img>
+							<span class="HideOnSmallWidth">Red</span>
+						</span>
+						<span class="cell" id="moveBlack">
+							<img src="img/chesspieces/wikipedia/bK.png" style="width: 100%;"></img>
+							<span class="HideOnSmallWidth">Black</span>
+						</span>
+						<span class="cell" id="moveGreen">
+							<img src="img/chesspieces/wikipedia/gK.png" style="width: 100%;"></img>
+							<span class="HideOnSmallWidth">Green</span>
+						</span>
 					</div>
 				</div>
 			</div>
-			<div id="board" style="width: 400px"></div>
 		</div>
 		<script>
 			initialize();
+
+			$(document).click(function(e) {
+				$(':focus').blur();
+			});
+
+			$(window).resize(function(e) {
+				board.resize(e);
+			});
 		</script>
 	</body>
 </html>

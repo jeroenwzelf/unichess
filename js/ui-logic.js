@@ -20,6 +20,14 @@ function addMoveToMoveList(move) {
 	cell.append(html);
 }
 
+function updateCurrrentPlayer(player) {
+	var previousCell = $('#move' + playerToString(previousPlayer(player)));
+	var cell = $('#move' + playerToString(player));
+
+	previousCell.css("background-color", "");
+	cell.css("background-color", "#666");
+}
+
 var removeGreySquares = function() {
   $('#board .square-55d63').css('background', '');
 };

@@ -364,11 +364,11 @@ function calculateSquareSize() {
   // pad one pixel
   var boardWidth = containerWidth - 1;
 
-  while (boardWidth % 8 !== 0 && boardWidth > 0) {
+  while (boardWidth % 14 !== 0 && boardWidth > 0) {
     boardWidth--;
   }
 
-  return (boardWidth / 8);
+  return (boardWidth / 14);
 }
 
 // create random IDs for elements

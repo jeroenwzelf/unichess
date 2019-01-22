@@ -4,7 +4,7 @@ var turn = 0;
 /*var players = [
 	player1 = {
 		id = 1,
-		
+
 	}
 ];*/
 
@@ -27,6 +27,7 @@ function initialize() {
 		onDrop: onDrop,
 	};
 	board = ChessBoard('board', cfg);
+	updateCurrrentPlayer(turn);
 }
 
 var onDragStart = function(source, piece, position, orientation) {
@@ -46,10 +47,21 @@ var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 		) return 'snapback';
 
 	delete moved_pieces[source];
+
 	addMoveToMoveList(target);
 	turn++;
+	updateCurrrentPlayer(turn % 4);
 };
 
+function previousPlayer(player) {
+	var prev = player - 1;
+	if (prev === -1) prev = 3;
+	return prev;
+}
+
+function nextPlayer(player) {
+	return (player + 1) % 4;
+}
 
 function squareUp(square) {
 	if (!square) return;
