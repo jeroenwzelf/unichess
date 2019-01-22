@@ -95,7 +95,33 @@ var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 	var oldPosTarget = oldPos[target] ? oldPos[target] : ' ';
 	if ( (!board.validMove(source + '-' + target)) // moves are on the board
 		|| (oldPos[source][0] === oldPosTarget[0]) // moves to friendly piece
+		|| !(validMoves(oldPos, source).includes(target))
 		) return 'snapback';
 	addMoveToMoveList(target);
 	turn++;
 };
+
+
+function squareUp(square) {
+	var number = Number(square.substr(1, square.length));
+	if (!square || number === 14) return;
+	return square[0] + (Number(square[1])+1);
+}
+
+function squareDown(square) {
+	var number = Number(square.substr(1, square.length));
+	if (!square || number === 1) return;
+	return square[0] + (number-1);
+}
+
+function squareLeft(square) {
+	var number = Number(square.substr(1, square.length));
+	if (!square || square[0] === 'a') return;
+	return String.fromCharCode(square.charCodeAt(square[0]) - 1) + number;
+}
+
+function squareRight(square) {
+	var number = Number(square.substr(1, square.length));
+	if (!square || square[1] === 'n') return;
+	return String.fromCharCode(square.charCodeAt(square[0]) + 1) + number;
+}
