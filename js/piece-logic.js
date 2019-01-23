@@ -1,50 +1,39 @@
-var currentPieceColor;
+var currentPieceOwner;
 
 function up(square) {
-	switch(currentPieceColor) {
-		case 'w': return squareUp(square);
-		case 'r': return squareLeft(square);
-		case 'b': return squareDown(square);
-		case 'g': return squareRight(square);
+	switch(currentPieceOwner) {
+		case 0: return squareUp(square);
+		case 1: return squareLeft(square);
+		case 2: return squareDown(square);
+		case 3: return squareRight(square);
 	}
 }
 
 function down(square) {
-	switch(currentPieceColor) {
-		case 'w': return squareDown(square);
-		case 'r': return squareRight(square);
-		case 'b': return squareUp(square);
-		case 'g': return squareLeft(square);
+	switch(currentPieceOwner) {
+		case 0: return squareDown(square);
+		case 1: return squareRight(square);
+		case 2: return squareUp(square);
+		case 3: return squareLeft(square);
 	}
 }
 
 function left(square) {
-	switch(currentPieceColor) {
-		case 'w': return squareLeft(square);
-		case 'r': return squareDown(square);
-		case 'b': return squareRight(square);
-		case 'g': return squareUp(square);
+	switch(currentPieceOwner) {
+		case 0: return squareLeft(square);
+		case 1: return squareDown(square);
+		case 2: return squareRight(square);
+		case 3: return squareUp(square);
 	}
 }
 
 function right(square) {
-	switch(currentPieceColor) {
-		case 'w': return squareRight(square);
-		case 'r': return squareUp(square);
-		case 'b': return squareLeft(square);
-		case 'g': return squareDown(square);
+	switch(currentPieceOwner) {
+		case 0: return squareRight(square);
+		case 1: return squareUp(square);
+		case 2: return squareLeft(square);
+		case 3: return squareDown(square);
 	}
-}
-
-function isCurrentPlayerPiece(piece) {
-	if (!piece) return false;
-	switch (turn % 4) {
-		case 0: if (piece.search(/^w/) === -1) return false; break;
-		case 1: if (piece.search(/^r/) === -1) return false; break;
-		case 2: if (piece.search(/^b/) === -1) return false; break;
-		case 3: if (piece.search(/^g/) === -1) return false; break;
-	}
-	return true;
 }
 
 function validMoves(position, source) {
@@ -70,8 +59,7 @@ function validMoves(position, source) {
 
 function isEnemyOf(piece, enemy) {
 	if (!enemy || !piece) return;
-	if (enemy[0] === piece[0]) return false;
-	return true;
+	return (enemy[0] !== piece[0]);
 }
 
 function calculateInChecks(position) {
@@ -106,7 +94,7 @@ function preventsCheck(position, move) {
 function validMovesForPiece(position, source) {
 	var moves = [];
 	var piece = position[source];
-	currentPieceColor = piece[0];
+	currentPieceOwner = getPlayerByColor(piece[0]);
 	switch (piece[1]) {
 		case "P": moves.push.apply(moves, pawn(position, source)); break;
 		case "N": moves.push.apply(moves, knight(position, source)); break;
@@ -115,7 +103,7 @@ function validMovesForPiece(position, source) {
 		case "B": moves.push.apply(moves, bishop(position, source)); if (piece[1] === "B") break;
 		case "R": moves.push.apply(moves, rook(position, source)); break;
 	}
-	currentPieceColor = null;
+	currentPieceOwner = null;
 	return moves;
 }
 

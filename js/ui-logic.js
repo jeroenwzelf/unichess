@@ -4,10 +4,10 @@ function addMoveToMoveList(move) {
 		var html = 
 		'<div class="row">' +
 			'<span class="cell primary" data-label="Move">' + turn / 4 + '</span>' +
-			'<span class="cell" data-label="White"></span>' +
-			'<span class="cell" data-label="Red"></span>' +
-			'<span class="cell" data-label="Black"></span>' +
-			'<span class="cell" data-label="Green"></span>' +
+			'<span class="cell" data-label="' + playerToString(0) + '"></span>' +
+			'<span class="cell" data-label="' + playerToString(1) + '"></span>' +
+			'<span class="cell" data-label="' + playerToString(2) + '"></span>' +
+			'<span class="cell" data-label="' + playerToString(3) + '"></span>' +
 		'</div>';
 		$('#table').append(html);
 

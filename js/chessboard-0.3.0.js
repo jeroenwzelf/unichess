@@ -37,7 +37,8 @@ function validSquare(square) {
 
 function validPieceCode(code) {
   if (typeof code !== 'string') return false;
-  return (code.search(/^[bwgr][KQRNBP]$/) !== -1);
+  var regex = new RegExp('[' + playerState[0].color + playerState[1].color + playerState[2].color + playerState[3].color + '[KQRNBP]');
+  return (code.search(regex) !== -1);
 }
 
 function validPositionObject(pos) {
@@ -385,14 +386,14 @@ function createElIds() {
   // spare pieces
   var pieces = 'KQRBNP'.split('');
   for (var i = 0; i < pieces.length; i++) {
-    var whitePiece = 'w' + pieces[i];
-    var blackPiece = 'b' + pieces[i];
-    var greenPiece = 'g' + pieces[i];
-    var redPiece = 'r' + pieces[i];
-    SPARE_PIECE_ELS_IDS[whitePiece] = whitePiece + '-' + createId();
-    SPARE_PIECE_ELS_IDS[blackPiece] = blackPiece + '-' + createId();
-    SPARE_PIECE_ELS_IDS[greenPiece] = greenPiece + '-' + createId();
-    SPARE_PIECE_ELS_IDS[redPiece] = redPiece + '-' + createId();
+    var p0Piece = playerState[0].color + pieces[i];
+    var p1Piece = playerState[1].color + pieces[i];
+    var p2Piece = playerState[2].color + pieces[i];
+    var p3Piece = playerState[3].color + pieces[i];
+    SPARE_PIECE_ELS_IDS[p0Piece] = p0Piece + '-' + createId();
+    SPARE_PIECE_ELS_IDS[p1Piece] = p1Piece + '-' + createId();
+    SPARE_PIECE_ELS_IDS[p2Piece] = p2Piece + '-' + createId();
+    SPARE_PIECE_ELS_IDS[p3Piece] = p3Piece + '-' + createId();
   }
 }
 
