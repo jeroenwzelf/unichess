@@ -38,23 +38,29 @@ function right(square) {
 
 function validMoves(position, source) {
 	var moves = [];
-
 	// there has to be a piece at source
 	var piece = position[source];
-	if (piece !== null) {
+	if (typeof piece !== 'undefined') {
 		// valid moves for specific pieces
 		moves = validMovesForPiece(position, source);
 
 		var i = moves.length;
 		while (i--) {
 			var target = position[moves[i]];
-			// remove moves that go out of bounds
-			if (!board.validMove(source + '-' + moves[i])) moves.splice(i, 1);
-			// remove moves that go to friendlies
-			else if (typeof target !== 'undefined' && target[0] === piece[0]) moves.splice(i, 1);
+			if (	(!board.validMove(source + '-' + moves[i]))	// remove moves that go out of bounds
+				||  (typeof target !== 'undefined' && target[0] === piece[0]) // remove moves that go to friendlies
+				||  (!preventsCheck(position, source, moves[i])) // remove moves that don't prevent the check
+				) moves.splice(i, 1);
 		}
 	}
 	return moves;
+}
+
+function isCheckmate(position, color) {
+	for (var i in position) {
+		if (validMoves(position, position[i]).length > 0) return false;
+	}
+	return true;
 }
 
 function isEnemyOf(piece, enemy) {
@@ -63,11 +69,9 @@ function isEnemyOf(piece, enemy) {
 }
 
 function calculateInChecks(position) {
-	// clean all checks
-	for (var state in playerState) {
-		playerState[state].inCheck = false;
-		removeKingCheck(playerState[state].kingPos);
-	}
+	var newPlayerState = deepCopy(playerState);
+	for (var state in newPlayerState)
+		newPlayerState[state].inCheck = false;
 	// search for checks
 	for (var square in position) {
 		var moves = validMovesForPiece(position, square);
@@ -77,18 +81,32 @@ function calculateInChecks(position) {
 			// check if this move would take any king
 			for (var player = 0; player < 4; player++) {
 				var attackingPiece = position[square];
-				var king = position[playerState[player].kingPos];
+				var king = position[newPlayerState[player].kingPos];
 				if (attackingPiece[0] !== king[0] && position[move] === king) {
-					kingcheck(playerState[player].kingPos);
-					playerState[player].inCheck = true;
+					newPlayerState[player].inCheck = true;
 				}
 			}
 		}
 	}
+	return deepCopy(newPlayerState);
 }
 
-function preventsCheck(position, move) {
+function preventsCheck(position, source, target) {
+	// do move
+	var newPos = deepCopy(position);
+	delete newPos[source];
+	newPos[target] = position[source];
+	var oldMovedPieces = deepCopy(moved_pieces);
+	var oldPlayerState = deepCopy(playerState);
+	if (position[source][1] === 'K') playerState[getPlayerByColor(position[source][0])].kingPos = target;
 
+	// check if this results in being checked
+	var newPlayerState = calculateInChecks(newPos);
+
+	// revert to old state
+	moved_pieces = deepCopy(oldMovedPieces);
+	playerState = deepCopy(oldPlayerState);
+	return (!newPlayerState[turn % 4].inCheck);
 }
 
 function validMovesForPiece(position, source) {

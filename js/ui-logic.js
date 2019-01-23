@@ -39,12 +39,11 @@ var highlight = function(square) {
 
 var kingcheck = function(square) {
 	var squareEl = $('#board .square-' + square);
-	squareEl.addClass('highlight-king');
+	squareEl.addClass('highlight-check');
 }
 
-var removeKingCheck = function(square) {
-	var squareEl = $('#board .square-' + square);
-	squareEl.removeClass('highlight-king');	
+var removeCheckHighlights = function() {
+	$('#board .square-55d63').removeClass('highlight-check');
 }
 
 var removeGreySquares = function() {

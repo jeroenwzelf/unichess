@@ -15,8 +15,6 @@ var position = {
 	a4: playerState[3].color + 'R', a5: playerState[3].color + 'N', a6: playerState[3].color + 'B', a7: playerState[3].color + 'Q', a8: playerState[3].color + 'K', a9: playerState[3].color + 'B', a10: playerState[3].color + 'N', a11: playerState[3].color + 'R', b4: playerState[3].color + 'P', b5: playerState[3].color + 'P', b6: playerState[3].color + 'P', b7: playerState[3].color + 'P', b8: playerState[3].color + 'P', b9: playerState[3].color + 'P', b10: playerState[3].color + 'P', b11: playerState[3].color + 'P',
 	n4: playerState[1].color + 'R', n5: playerState[1].color + 'N', n6: playerState[1].color + 'B', n7: playerState[1].color + 'Q', n8: playerState[1].color + 'K', n9: playerState[1].color + 'B', n10: playerState[1].color + 'N', n11: playerState[1].color + 'R', m4: playerState[1].color + 'P', m5: playerState[1].color + 'P', m6: playerState[1].color + 'P', m7: playerState[1].color + 'P', m8: playerState[1].color + 'P', m9: playerState[1].color + 'P', m10: playerState[1].color + 'P', m11: playerState[1].color + 'P',
 };
-
-var currentPosition = position;
 var moved_pieces = position;
 
 function initialize() {
@@ -60,9 +58,17 @@ var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 	addMoveToMoveList(target);
 	turn++;
 	updateCurrrentPlayer(turn % 4);
-	currentPosition = newPos;
 
-	calculateInChecks(newPos);
+	// calculate all checks
+	removeCheckHighlights();
+	playerState = calculateInChecks(newPos);
+	for (var state in playerState) {
+		if (playerState[state].inCheck) kingcheck(playerState[state].kingPos);
+	}
+
+	// check if there is still a move left to do
+	if (isCheckmate(newPos, playerState[turn % 4].color).length === 0)
+		alert("checkmate!");
 };
 
 function getPlayerByColor(color) {
@@ -106,4 +112,8 @@ function squareRight(square) {
 	if (!square || square[0] === 'n') return;
 	var number = Number(square.substr(1, square.length));
 	return String.fromCharCode(square.charCodeAt(square[0]) + 1) + number;
+}
+
+function deepCopy(thing) {
+	return JSON.parse(JSON.stringify(thing));
 }
