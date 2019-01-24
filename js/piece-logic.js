@@ -39,7 +39,7 @@ function right(square) {
 function validMoves(position, source) {
 	var moves = [];
 	// there has to be a piece at source
-	var piece = position[source];
+	var piece = position[source];	
 	if (typeof piece !== 'undefined') {
 		// valid moves for specific pieces
 		moves = validMovesForPiece(position, source);
@@ -57,7 +57,10 @@ function validMoves(position, source) {
 
 function isCheckmate(position, color) {
 	for (var i in position) {
-		if (validMoves(position, position[i]).length > 0) return false;
+		var moves = validMoves(position, i);
+		for (var j in moves) {
+			if (moves[j] !== "null") return false;
+		}
 	}
 	return true;
 }
@@ -79,10 +82,12 @@ function calculateInChecks(position) {
 			var move = moves[i];
 			// check if this move would take any king
 			for (var player = 0; player < 4; player++) {
-				var attackingPiece = position[square];
-				var king = position[newPlayerState[player].kingPos];
-				if (attackingPiece[0] !== king[0] && position[move] === king) {
-					newPlayerState[player].inCheck = true;
+				if (!newPlayerState[player].checkMate) {
+					var attackingPiece = position[square];
+					var king = position[newPlayerState[player].kingPos];
+					if (attackingPiece[0] !== king[0] && position[move] === king) {
+						newPlayerState[player].inCheck = true;
+					}
 				}
 			}
 		}
@@ -111,16 +116,18 @@ function preventsCheck(position, source, target) {
 function validMovesForPiece(position, source) {
 	var moves = [];
 	var piece = position[source];
-	currentPieceOwner = getPlayerByColor(piece[0]);
-	switch (piece[1]) {
-		case "P": moves.push.apply(moves, pawn(position, source)); break;
-		case "N": moves.push.apply(moves, knight(position, source)); break;
-		case "K": moves.push.apply(moves, king(position, source)); break;
-		case "Q":
-		case "B": moves.push.apply(moves, bishop(position, source)); if (piece[1] === "B") break;
-		case "R": moves.push.apply(moves, rook(position, source)); break;
+	if (piece[0] !== 'c') {
+		currentPieceOwner = getPlayerByColor(piece[0]);
+		switch (piece[1]) {
+			case "P": moves.push.apply(moves, pawn(position, source)); break;
+			case "N": moves.push.apply(moves, knight(position, source)); break;
+			case "K": moves.push.apply(moves, king(position, source)); break;
+			case "Q":
+			case "B": moves.push.apply(moves, bishop(position, source)); if (piece[1] === "B") break;
+			case "R": moves.push.apply(moves, rook(position, source)); break;
+		}
+		currentPieceOwner = null;
 	}
-	currentPieceOwner = null;
 	return moves;
 }
 

@@ -37,7 +37,7 @@ function validSquare(square) {
 
 function validPieceCode(code) {
   if (typeof code !== 'string') return false;
-  var regex = new RegExp('[' + playerState[0].color + playerState[1].color + playerState[2].color + playerState[3].color + '[KQRNBP]');
+  var regex = new RegExp('[' + playerState[0].color + playerState[1].color + playerState[2].color + playerState[3].color + 'c][KQRNBP]');
   return (code.search(regex) !== -1);
 }
 
@@ -1168,6 +1168,12 @@ widget.fen = function() {
 widget.flip = function() {
   widget.orientation('flip');
 };
+
+widget.changePlayerPiecesColor = function(player, color) {
+  for (var i in CURRENT_POSITION) {
+    if (CURRENT_POSITION[i][0] === player) CURRENT_POSITION[i] = color + CURRENT_POSITION[i][1];
+  }
+}
 
 /*
 // TODO: write this, GitHub Issue #5

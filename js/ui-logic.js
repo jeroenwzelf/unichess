@@ -46,6 +46,10 @@ var removeCheckHighlights = function() {
 	$('#board .square-55d63').removeClass('highlight-check');
 }
 
+var removeCheckHighlight = function(square) {
+	$('#board .square-' + square).removeClass('highlight-check');
+}
+
 var removeGreySquares = function() {
   $('#board .square-55d63').css('background', '');
 };

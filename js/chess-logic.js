@@ -2,10 +2,10 @@ var board;
 var turn = 0;
 var selectedSquare;
 var playerState = [
-	{ color: 'w', kingPos: 'h1', inCheck: false },
-	{ color: 'i', kingPos: 'n8', inCheck: false },
-	{ color: 'b', kingPos: 'h14', inCheck: false },
-	{ color: 'a', kingPos: 'a8', inCheck: false }
+	{ color: 'w', kingPos: 'h1', inCheck: false, inCheckMate: false },
+	{ color: 'i', kingPos: 'n8', inCheck: false, inCheckMate: false },
+	{ color: 'b', kingPos: 'h14', inCheck: false, inCheckMate: false },
+	{ color: 'a', kingPos: 'a8', inCheck: false, inCheckMate: false }
 ];
 
 // starting 4 player position
@@ -67,9 +67,21 @@ var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 	}
 
 	// check if there is still a move left to do
-	if (isCheckmate(newPos, playerState[turn % 4].color).length === 0)
-		alert("checkmate!");
+	if (isCheckmate(newPos, playerState[turn % 4].color))
+		checkmate(turn % 4);
+
+	if (playerState[turn % 4].checkMate) {
+		addMoveToMoveList("");
+		turn++;
+		updateCurrrentPlayer(turn % 4);
+	}
 };
+
+function checkmate(player) {
+	playerState[player].checkMate = true;
+	board.changePlayerPiecesColor(playerState[player].color, 'c');
+	removeCheckHighlight(playerState[player].kingPos);
+}
 
 function getPlayerByColor(color) {
 	var i = playerState.length;
