@@ -43,7 +43,6 @@ function validMoves(position, source) {
 	if (typeof piece !== 'undefined') {
 		// valid moves for specific pieces
 		moves = validMovesForPiece(position, source);
-
 		var i = moves.length;
 		while (i--) {
 			var target = position[moves[i]];
@@ -179,6 +178,7 @@ function king(position, source) {
 	moves.push(right(upMove));
 
 	var downMove = down(source);
+	moves.push(downMove);
 	moves.push(left(downMove));
 	moves.push(right(downMove));
 
