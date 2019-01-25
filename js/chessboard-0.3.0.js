@@ -1262,11 +1262,6 @@ widget.position = function(position, useAnimation) {
     position = deepCopy(START_POSITION);
   }
 
-  // convert FEN to position object
-  if (validFen(position) === true) {
-    position = fenToObj(position);
-  }
-
   // validate position object
   if (validPositionObject(position) !== true) {
     error(6482, 'Invalid value passed to the position method.', position);

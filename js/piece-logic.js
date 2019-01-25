@@ -100,7 +100,7 @@ function preventsCheck(position, source, target) {
 	var newPos = deepCopy(position);
 	delete newPos[source];
 	newPos[target] = position[source];
-	var oldMovedPieces = deepCopy(moved_pieces);
+	var oldMovedPieces = deepCopy(unmoved_pieces);
 	var oldPlayerState = deepCopy(playerState);
 	if (position[source][1] === 'K') playerState[getPlayerByColor(position[source][0])].kingPos = target;
 
@@ -108,7 +108,7 @@ function preventsCheck(position, source, target) {
 	var newPlayerState = calculateInChecks(newPos);
 
 	// revert to old state
-	moved_pieces = deepCopy(oldMovedPieces);
+	unmoved_pieces = deepCopy(oldMovedPieces);
 	playerState = deepCopy(oldPlayerState);
 	return (!newPlayerState[turn % 4].inCheck);
 }
@@ -138,7 +138,7 @@ function pawn(position, source) {
 	var forwardMove = up(source);
 	if (!position[forwardMove]) moves.push(forwardMove);
 	// pawn double forward on first move
-	if (moved_pieces[source]) {
+	if (unmoved_pieces[source]) {
 		var doubleForwardMove = up(forwardMove);
 		if (!position[doubleForwardMove]) moves.push(doubleForwardMove);
 	}
@@ -191,6 +191,21 @@ function king(position, source) {
 
 	moves.push(left(source));
 	moves.push(right(source));
+
+	// castle moves
+	if (unmoved_pieces[source]) {
+		// kingside castling
+		var kingcastle = right(right(source));
+		if (!position[right(source)] && !position[kingcastle] && unmoved_pieces[right(kingcastle)]) {
+			moves.push(kingcastle);
+		}
+		// queenside castling
+		var queencastle = left(left(source));
+		if (!position[left(source)] && !position[queencastle] && !position[left(queencastle)] && unmoved_pieces[left(left(queencastle))]) {
+			moves.push(queencastle);
+		}
+
+	}
 
 	return moves;
 }
