@@ -1,29 +1,31 @@
 var board;
-var turn = 0;
+var turn;
 var selectedSquare;
-var playerState = [
-	{ color: 'w', kingPos: 'h1', inCheck: false, inCheckMate: false },
-	{ color: 'i', kingPos: 'n8', inCheck: false, inCheckMate: false },
-	{ color: 'b', kingPos: 'h14', inCheck: false, inCheckMate: false },
-	{ color: 'a', kingPos: 'a8', inCheck: false, inCheckMate: false }
-];
-
-// starting 4 player position
-var position = {
-	d1: playerState[0].color + 'R', e1: playerState[0].color + 'N', f1: playerState[0].color + 'B', g1: playerState[0].color + 'Q', h1: playerState[0].color + 'K', i1: playerState[0].color + 'B', j1: playerState[0].color + 'N', k1: playerState[0].color + 'R', d2: playerState[0].color + 'P', e2: playerState[0].color + 'P', f2: playerState[0].color + 'P', g2: playerState[0].color + 'P', h2: playerState[0].color + 'P', i2: playerState[0].color + 'P', j2: playerState[0].color + 'P', k2: playerState[0].color + 'P',
-	d14: playerState[2].color + 'R', e14: playerState[2].color + 'N', f14: playerState[2].color + 'B', g14: playerState[2].color + 'Q', h14: playerState[2].color + 'K', i14: playerState[2].color + 'B', j14: playerState[2].color + 'N', k14: playerState[2].color + 'R', d13: playerState[2].color + 'P', e13: playerState[2].color + 'P', f13: playerState[2].color + 'P', g13: playerState[2].color + 'P', h13: playerState[2].color + 'P', i13: playerState[2].color + 'P', j13: playerState[2].color + 'P', k13: playerState[2].color + 'P',
-	a4: playerState[3].color + 'R', a5: playerState[3].color + 'N', a6: playerState[3].color + 'B', a7: playerState[3].color + 'Q', a8: playerState[3].color + 'K', a9: playerState[3].color + 'B', a10: playerState[3].color + 'N', a11: playerState[3].color + 'R', b4: playerState[3].color + 'P', b5: playerState[3].color + 'P', b6: playerState[3].color + 'P', b7: playerState[3].color + 'P', b8: playerState[3].color + 'P', b9: playerState[3].color + 'P', b10: playerState[3].color + 'P', b11: playerState[3].color + 'P',
-	n4: playerState[1].color + 'R', n5: playerState[1].color + 'N', n6: playerState[1].color + 'B', n7: playerState[1].color + 'Q', n8: playerState[1].color + 'K', n9: playerState[1].color + 'B', n10: playerState[1].color + 'N', n11: playerState[1].color + 'R', m4: playerState[1].color + 'P', m5: playerState[1].color + 'P', m6: playerState[1].color + 'P', m7: playerState[1].color + 'P', m8: playerState[1].color + 'P', m9: playerState[1].color + 'P', m10: playerState[1].color + 'P', m11: playerState[1].color + 'P',
-};
-var unmoved_pieces = position;
+var playerState;
+var unmoved_pieces;
 
 function initialize() {
+	turn = 0;
+	playerState = [
+		{ color: 'w', kingPos: 'h1', inCheck: false, inCheckMate: false },
+		{ color: 'i', kingPos: 'n8', inCheck: false, inCheckMate: false },
+		{ color: 'b', kingPos: 'h14', inCheck: false, inCheckMate: false },
+		{ color: 'a', kingPos: 'a8', inCheck: false, inCheckMate: false }
+	];
+	// starting 4 player position
+	var position = {
+		d1: playerState[0].color + 'R', e1: playerState[0].color + 'N', f1: playerState[0].color + 'B', g1: playerState[0].color + 'Q', h1: playerState[0].color + 'K', i1: playerState[0].color + 'B', j1: playerState[0].color + 'N', k1: playerState[0].color + 'R', d2: playerState[0].color + 'P', e2: playerState[0].color + 'P', f2: playerState[0].color + 'P', g2: playerState[0].color + 'P', h2: playerState[0].color + 'P', i2: playerState[0].color + 'P', j2: playerState[0].color + 'P', k2: playerState[0].color + 'P',
+		d14: playerState[2].color + 'R', e14: playerState[2].color + 'N', f14: playerState[2].color + 'B', g14: playerState[2].color + 'Q', h14: playerState[2].color + 'K', i14: playerState[2].color + 'B', j14: playerState[2].color + 'N', k14: playerState[2].color + 'R', d13: playerState[2].color + 'P', e13: playerState[2].color + 'P', f13: playerState[2].color + 'P', g13: playerState[2].color + 'P', h13: playerState[2].color + 'P', i13: playerState[2].color + 'P', j13: playerState[2].color + 'P', k13: playerState[2].color + 'P',
+		a4: playerState[3].color + 'R', a5: playerState[3].color + 'N', a6: playerState[3].color + 'B', a7: playerState[3].color + 'Q', a8: playerState[3].color + 'K', a9: playerState[3].color + 'B', a10: playerState[3].color + 'N', a11: playerState[3].color + 'R', b4: playerState[3].color + 'P', b5: playerState[3].color + 'P', b6: playerState[3].color + 'P', b7: playerState[3].color + 'P', b8: playerState[3].color + 'P', b9: playerState[3].color + 'P', b10: playerState[3].color + 'P', b11: playerState[3].color + 'P',
+		n4: playerState[1].color + 'R', n5: playerState[1].color + 'N', n6: playerState[1].color + 'B', n7: playerState[1].color + 'Q', n8: playerState[1].color + 'K', n9: playerState[1].color + 'B', n10: playerState[1].color + 'N', n11: playerState[1].color + 'R', m4: playerState[1].color + 'P', m5: playerState[1].color + 'P', m6: playerState[1].color + 'P', m7: playerState[1].color + 'P', m8: playerState[1].color + 'P', m9: playerState[1].color + 'P', m10: playerState[1].color + 'P', m11: playerState[1].color + 'P',
+	};
+	unmoved_pieces = position;
+
 	var cfg = {
 		draggable: true,
 		position: position,
 		onDragStart: onDragStart,
 		onDrop: onDrop,
-		onChange: onChange
 	};
 	board = ChessBoard('board', cfg);
 	updateCurrrentPlayer(turn);
@@ -40,10 +42,6 @@ var onDragStart = function(source, piece, position, orientation) {
 	var moves = validMoves(position, source);
 	for (var i in moves) greySquare(moves[i]);
 };
-
-var onChange = function(oldPos, newPos) {
-
-}
 
 var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 	if (source !== target) {

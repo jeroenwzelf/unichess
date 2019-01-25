@@ -1,3 +1,8 @@
+function init_moveList() {
+	$('#move' + playerToString(turn%4)).css("background-color", "");
+	$('#table div:last-child').empty();	
+}
+
 function addMoveToMoveList(move) {
 	var player = turn % 4;
 	if (player === 0) {

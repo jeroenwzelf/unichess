@@ -21,7 +21,9 @@
 				<i class="fa fa-bars"></i>
 				<span class="HideOnSmallWidth" style="">Moves</span>
 			</a> -->
-			<!-- <a id="debug" href="javascript:void(0);">DBG</a> -->
+			<a id="newgame" href="javascript:void(0);">New game</a>
+			<a id="flip" href="javascript:void(0);">Flip board</a>
+			<div style="flex: auto;"></div>
 		</div>
 		<div style="display: flex; flex-flow: row;">
 			<div style="flex: auto;"></div>
@@ -55,7 +57,6 @@
 			</div>
 		</div>
 		<script>
-			var debug = false;
 			initialize();
 
 			$(document).click(function(e) {
@@ -66,8 +67,13 @@
 				board.resize(e);
 			});
 
-			$('#debug').click(function(e) {
-				debug = !debug;
+			$('#flip').click(function(e) {
+				board.flip();
+			});
+
+			$('#newgame').click(function(e) {
+				init_moveList()
+				initialize();
 			});
 		</script>
 	</body>
