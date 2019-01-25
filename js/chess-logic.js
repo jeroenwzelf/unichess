@@ -22,7 +22,8 @@ function initialize() {
 		draggable: true,
 		position: position,
 		onDragStart: onDragStart,
-		onDrop: onDrop
+		onDrop: onDrop,
+		onChange: onChange
 	};
 	board = ChessBoard('board', cfg);
 	updateCurrrentPlayer(turn);
@@ -39,6 +40,10 @@ var onDragStart = function(source, piece, position, orientation) {
 	var moves = validMoves(position, source);
 	for (var i in moves) greySquare(moves[i]);
 };
+
+var onChange = function(oldPos, newPos) {
+
+}
 
 var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 	if (source !== target) {
@@ -70,6 +75,23 @@ var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 				delete unmoved_pieces[left(left(target))];
 			}
 			currentPieceOwner = null;
+		}
+	}
+	// Pawn promotion
+	else if (piece[1] === 'P') {
+		switch (turn % 4) {
+			case 0: {
+				if (target[1] === '8') board.promoteDraggedPiece();
+			} break;
+			case 1: {
+				if (target[0] === 'g') board.promoteDraggedPiece();
+			} break;
+			case 2: {
+				if (target[1] === '7') board.promoteDraggedPiece();
+			} break;
+			case 3: {
+				if (target[0] === 'h') board.promoteDraggedPiece();
+			} break;
 		}
 	}
 

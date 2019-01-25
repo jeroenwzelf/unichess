@@ -1175,6 +1175,10 @@ widget.changePlayerPiecesColor = function(player, color) {
   }
 }
 
+widget.promoteDraggedPiece = function() {
+  DRAGGED_PIECE = DRAGGED_PIECE[0] + 'Q';
+}
+
 /*
 // TODO: write this, GitHub Issue #5
 widget.highlight = function() {
