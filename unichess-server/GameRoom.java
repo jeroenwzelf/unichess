@@ -74,8 +74,10 @@ public class GameRoom {
 	}
 
 	private int playerWithHostname(String hostname) {
-		for (int i=0; i<4; ++i)
-			if (players[i].equals(hostname)) return i;
+		for (int i=0; i<4; ++i) {
+			if (players[i] != null && players[i].equals(hostname))
+				return i;
+		}
 		return -1;
 	}
 

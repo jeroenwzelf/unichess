@@ -4,15 +4,18 @@
 		<title>Uni-Chess</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"></script>
+
 		<link rel="stylesheet" href="css/chessboard-0.3.0.css">
 		<link rel="stylesheet" href="css/style.css">
-		<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" charset="utf-8"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 		<script type="text/javascript" src="js/chessboard-0.3.0.js"></script>
 		<script type="text/javascript" src="js/ui-logic.js"></script>
 		<script type="text/javascript" src="js/chess-logic.js"></script>
 		<script type="text/javascript" src="js/piece-logic.js"></script>
+		<script type="text/javascript" src="js/network.js"></script>
 		<script type="text/javascript" src="js/socket.js"></script>
 	</head>
 
@@ -25,56 +28,82 @@
 			<a id="newgame" href="javascript:void(0);">New game</a>
 			<a id="flip" href="javascript:void(0);">Flip board</a>
 			<div style="flex: auto;"></div>
+			<a id="socketconnection" class="ui-widget ui-helper-clearfix ui-state-default ui-corner-all" href="javascript:void(0);">
+				<!-- <span class="ui-icon ui-icon-bullet" style="display:inline-block">s</span> -->
+				<span id="list"></span>
+				<span id="socketconnectionbutton" class="fa fa-circle"></span>
+				<span id="socketconnectiontext" class="HideOnSmallWidth">not connected</span>
+			</a>
 		</div>
 		<div style="display: flex; flex-flow: row;">
 			<div style="flex: auto;"></div>
 			<div id="board" style="width: 45%; padding: 20px;"></div>
 			<div style="flex: auto"></div>
-			<div id="MovesDiv" style="display: flex; flex-flow: column; padding-right: 0px; width: 20%; float: right;">
-				<div id="table">
-					<div class="header-row row HideOnMicroWidth">
-						<span class="cell primary">
-							<img src="img/chesspieces/wikipedia/wK.png" class="HideOnSmallWidth" style="width: 100%; visibility: hidden;"></img>
-							<span>#</span>
-						</span>
-						<span class="cell" id="moveWhite">
-							<img src="img/chesspieces/wikipedia/wK.png" style="width: 100%;"></img>
-							<span class="HideOnSmallWidth">White</span>
-						</span>
-						<span class="cell" id="moveIvory">
-							<img src="img/chesspieces/wikipedia/iK.png" style="width: 100%;"></img>
-							<span class="HideOnSmallWidth">Ivory</span>
-						</span>
-						<span class="cell" id="moveBlack">
-							<img src="img/chesspieces/wikipedia/bK.png" style="width: 100%;"></img>
-							<span class="HideOnSmallWidth">Black</span>
-						</span>
-						<span class="cell" id="moveOak">
-							<img src="img/chesspieces/wikipedia/aK.png" style="width: 100%;"></img>
-							<span class="HideOnSmallWidth">Oak</span>
-						</span>
-					</div>
+			<div id="MovesDiv" style="display: flex; flex-flow: column; padding-right: 0px; width: 20%; float: right;"></div>
+		</div>
+		<!-- About Popup -->
+		<div id="popUp" class="popUpClosed">
+			<div id="close" class="close"><i class="fa fa-times"></i></div>
+			<div id="new"><span>Online play</span></div>
+			<h2>Join a server:</h2>
+			<div style="display: flex; flex-flow: row; padding: 10px;">
+				<input style="height: 40px; width: 190px; display: block; margin: 10px;" type="text" id="serveraddress" placeholder="xxx.xxx.xxx.xxx:port" title="IP and port of server to join">
+				<div style="display: flex; justify-content: center; align-items: center; margin: 10px">
+					<a id="serverconnectbutton" href="javascript:void(0);" class="connectbutton">Connect</a>
 				</div>
 			</div>
+			<div style="display: flex; flex-flow: row; padding: 5px;">
+					<div style="flex: auto"></div>
+					<p style="margin: -6px 0 0 10px; color: #777; font-size: 12px;">Local IP: </p>
+					<p id="localipaddress" style="margin: -6px 0 0 10px; color: #777; font-size: 12px;"></p>
+				</div>
 		</div>
 		<script>
-			initialize();
+			$(document).ready(function() {
+				socket_set_status_connected(false);
+				getLocalIP();
 
-			$(document).click(function(e) {
-				$(':focus').blur();
-			});
-
-			$(window).resize(function(e) {
-				board.resize(e);
-			});
-
-			$('#flip').click(function(e) {
-				board.flip();
-			});
-
-			$('#newgame').click(function(e) {
-				init_moveList()
 				initialize();
+
+				$(document).click(function(e) {
+					$(':focus').blur();
+				});
+
+				$(window).resize(function(e) {
+					board.resize(e);
+				});
+
+				$('#flip').click(function(e) {
+					board.flip();
+				});
+
+				$('#newgame').click(function(e) {
+					if (websocket_state() === 1)
+						websocket_disconnect();
+					initialize();
+				});
+
+				$("#socketconnection").click(function(e) {
+					$("#popUp").removeClass("popUpClosed");
+					e.stopPropagation();
+				});
+
+				$("#serverconnectbutton").click(function(e) {
+					if (websocket_state() === 1) websocket_disconnect();
+					else websocket_connect($("#serveraddress").val());
+				});
+
+				$("#close").click(function(e) {
+					$("#popUp").addClass("popUpClosed");
+				});
+
+				$("#popUp").click(function(e) {
+					e.stopPropagation();
+				});
+
+				$(document).click(function(e) {
+					$("#popUp").addClass("popUpClosed");
+				});
 			});
 		</script>
 	</body>

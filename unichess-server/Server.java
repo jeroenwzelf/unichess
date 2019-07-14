@@ -12,9 +12,12 @@ import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class Server extends WebSocketServer {
 	private MessageHandler messageHandler = new MessageHandler(this);
 	private HashMap<WebSocket, String> connections = new HashMap();
+	private ObjectMapper JSONmapper = new ObjectMapper();
 
 	public static void main(String args[]) throws InterruptedException, IOException {
 		int port = 8887; // 843 flash policy port
@@ -25,16 +28,6 @@ public class Server extends WebSocketServer {
 		Server s = new Server(port);
 		System.out.println("Starting server on port: " + s.getPort());
 		s.start();
-
-		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
-		while (true) {
-			String in = sysin.readLine();
-			s.broadcast(in);
-			if (in.equals("exit")) {
-				s.stop(1000);
-				break;
-			}
-		}
 	}
 
 	public Server(int port) throws UnknownHostException {
@@ -51,8 +44,12 @@ public class Server extends WebSocketServer {
 		System.out.println(connections.get(conn) + " entered the room!");
 
 		try {
-			conn.send("Welcome to the server. You are player " + messageHandler.onNewConnection(connections.get(conn)) + "!");
-		} catch (IllegalStateException ex) {
+			Message response = new Message();
+			response.function = "newPlayer";
+			response.argument = String.valueOf(messageHandler.onNewConnection(connections.get(conn)));
+
+			conn.send(JSONmapper.writeValueAsString(response));
+		} catch (Exception ex) {
 			conn.send(ex.toString());
 		}
 	}

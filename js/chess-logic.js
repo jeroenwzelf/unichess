@@ -4,7 +4,10 @@ var selectedSquare;
 var playerState;
 var unmoved_pieces;
 
+var playerColor;
+
 function initialize() {
+	init_moveList();
 	turn = 0;
 	playerState = [
 		{ color: 'w', kingPos: 'h1', inCheck: false, inCheckMate: false },
@@ -28,11 +31,17 @@ function initialize() {
 		onDrop: onDrop,
 	};
 	board = ChessBoard('board', cfg);
-	updateCurrrentPlayer(turn);
+	updateCurrentPlayer(turn);
+}
+
+var onlineMoveDone = function(source, target) {
+	var position = board.move(source + "-" + target);
+	evaluateMove(source, target, position[target], position);
 }
 
 var onDragStart = function(source, piece, position, orientation) {
 	if (playerState[turn % 4].color !== piece[0]) return false;
+	if (websocket_state() === 1 && playerColor !== piece[0]) return false;	// if online and its not the user's turn
 	removeHighlights();
 	removeGreySquares();
 	
@@ -54,7 +63,14 @@ var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 	if ( !(validMoves(oldPos, source).includes(target)) // is not a legal move
 		) return 'snapback';
 
+	evaluateMove(source, target, piece, newPos);
+	// if online, send move to server
+	if (websocket_state() === 1) {
+		websocket_move(source + "-" + target);
+	}
+};
 
+function evaluateMove(source, target, piece, newPos) {
 	if (piece[1] === 'K') {
 		playerState[getPlayerByColor(piece[0])].kingPos = target;
 		// castles
@@ -97,7 +113,7 @@ var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 
 	addMoveToMoveList(target);
 	turn++;
-	updateCurrrentPlayer(turn % 4);
+	updateCurrentPlayer(turn % 4);
 
 	// calculate all checks
 	removeCheckHighlights();
@@ -113,9 +129,9 @@ var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 	if (playerState[turn % 4].checkMate) {
 		addMoveToMoveList("");
 		turn++;
-		updateCurrrentPlayer(turn % 4);
+		updateCurrentPlayer(turn % 4);
 	}
-};
+}
 
 function checkmate(player) {
 	playerState[player].checkMate = true;

@@ -1,6 +1,32 @@
 function init_moveList() {
+	var moveList = $('#MovesDiv');
+	moveList.empty();
+	var html = '<div id="table">' +
+					'<div class="header-row row HideOnMicroWidth">' +
+						'<span class="cell primary">' +
+							'<img src="img/chesspieces/wikipedia/wK.png" class="HideOnSmallWidth" style="width: 100%; visibility: hidden;"></img>' +
+							'<span>#</span>' +
+						'</span>' +
+						'<span class="cell" id="moveWhite">' +
+							'<img src="img/chesspieces/wikipedia/wK.png" style="width: 100%;"></img>' +
+							'<span class="HideOnSmallWidth">White</span>' +
+						'</span>' +
+						'<span class="cell" id="moveIvory">' +
+							'<img src="img/chesspieces/wikipedia/iK.png" style="width: 100%;"></img>' +
+							'<span class="HideOnSmallWidth">Ivory</span>' +
+						'</span>' +
+						'<span class="cell" id="moveBlack">' +
+							'<img src="img/chesspieces/wikipedia/bK.png" style="width: 100%;"></img>' +
+							'<span class="HideOnSmallWidth">Black</span>' +
+						'</span>' +
+						'<span class="cell" id="moveOak">' +
+							'<img src="img/chesspieces/wikipedia/aK.png" style="width: 100%;"></img>' +
+							'<span class="HideOnSmallWidth">Oak</span>' +
+						'</span>' +
+					'</div>' +
+				'</div>';
+	moveList.append(html);
 	$('#move' + playerToString(turn%4)).css("background-color", "");
-	$('#table div:last-child').empty();	
 }
 
 function addMoveToMoveList(move) {
@@ -25,7 +51,7 @@ function addMoveToMoveList(move) {
 	cell.append(html);
 }
 
-function updateCurrrentPlayer(player) {
+function updateCurrentPlayer(player) {
 	var previousCell = $('#move' + playerToString(previousPlayer(player)));
 	var cell = $('#move' + playerToString(player));
 
@@ -76,5 +102,19 @@ function playerToString(player) {
 		case 1: return 'Ivory';
 		case 2: return 'Black';
 		case 3: return 'Oak';
+	}
+}
+
+function socket_set_status_connected(connected) {
+	$("#serveraddress").prop('disabled', connected);
+	if (connected) {
+		$("#serverconnectbutton").text("Disconnect");
+		$('#socketconnectionbutton').css("color", "green");
+		$('#socketconnectiontext').text("connected");
+	}
+	else {
+		$("#serverconnectbutton").text("Connect");
+		$('#socketconnectionbutton').css("color", "red");
+		$('#socketconnectiontext').text("not connected");
 	}
 }

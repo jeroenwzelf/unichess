@@ -1187,7 +1187,7 @@ widget.highlight = function() {
 */
 
 // move pieces
-widget.move = function() {
+widget.move = function(args) {
   // no need to throw an error here; just do nothing
   if (arguments.length === 0) return;
 
