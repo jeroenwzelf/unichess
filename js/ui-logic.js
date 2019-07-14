@@ -73,8 +73,8 @@ var greySquare = function(square) {
 function playerToString(player) {
 	switch (player) {
 		case 0: return 'White';
-		case 1: return 'Red';
+		case 1: return 'Ivory';
 		case 2: return 'Black';
-		case 3: return 'Green';
+		case 3: return 'Oak';
 	}
 }

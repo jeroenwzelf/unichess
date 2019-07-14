@@ -1,0 +1,48 @@
+#!/bin/bash
+
+target=$1
+classes="GameRoom Message MessageHandler Server"
+classpath=".:libs/Java-WebSocket-1.4.0-with-dependencies.jar:libs/jackson-core-2.9.9.jar:libs/jackson-databind-2.9.9.jar:libs/jackson-annotations-2.9.9.jar"
+
+cmd() {
+	echo "$1"
+	$1
+}
+
+clean() {
+	cmd 'rm -rf *.class'
+}
+
+build() {
+	cmd "javac -cp $classpath *.java"
+}
+
+run() {
+	cmd "java -cp $classpath Server $1"
+}
+
+clean_run() {
+	clean
+	build
+	run $1
+}
+
+if [ "$target" == "clean" ]; then
+	clean
+	exit 0
+fi
+
+if [ "$target" == "run" ]; then
+	if [ "$2" == "-f" ]; then
+		clean_run $3
+		exit 0
+	fi
+
+	run $2
+	exit 0
+fi
+
+if [ "$target" == "build" ] || [ -z "$1" ]; then
+	build
+	exit 0
+fi
