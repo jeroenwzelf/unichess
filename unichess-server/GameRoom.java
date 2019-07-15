@@ -1,5 +1,6 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class GameRoom {
 	private Server server;
@@ -83,6 +84,10 @@ public class GameRoom {
 				return i;
 		}
 		return -1;
+	}
+
+	public String[] getAllPlayers() {
+		return players;
 	}
 
 	private int playerCount() {

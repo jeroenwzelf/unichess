@@ -11,6 +11,10 @@ public class MessageHandler {
 		gameRoom = new GameRoom(s);
 	}
 
+	public String[] getAllPlayers() {
+		return gameRoom.getAllPlayers();
+	}
+
 	public int onNewConnection(String hostname) {
 		return gameRoom.newPlayer(hostname);
 	}

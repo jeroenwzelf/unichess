@@ -18,7 +18,8 @@ build() {
 }
 
 run() {
-	cmd "java -cp $classpath -Dorg.slf4j.simpleLogger.defaultLogLevel=debug Server $1"
+	logging="-Dorg.slf4j.simpleLogger.defaultLogLevel=debug"
+	cmd "java -cp $classpath $logging Server $1"
 }
 
 clean_run() {

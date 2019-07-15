@@ -51,6 +51,7 @@ function messagehandler_process(JSONmessage) {
 	switch (message.function) {
 		case "assignPlayer": messagehandler_assignPlayer(message.argument); break;
 		case "playerConnected": messagehandler_playerConnected(message.argument); break;
+		case "playersConnected": messagehandler_playersConnected(message.argument); break;
 		case "playerDisconnected": messagehandler_playerDisconnected(message.argument); break;
 		case "gameStateChange": messagehandler_gameStateChanged(message.argument); break;
 		case "move": messagehandler_move(message.argument); break;
@@ -75,6 +76,7 @@ function messagehandler_assignPlayer(player) {
 function messagehandler_playerConnected(player) {
 	var connection = player.split("-");
 	if (playerColor === playerState[connection[0]].color) return;	// when a user joins, he gets a broadcast message too
+	alert(player);
 
 	var connectionColor = playerToString(parseInt(connection[0]));
 	var connectionHostname = connection[1];
@@ -85,6 +87,13 @@ function messagehandler_playerConnected(player) {
 	$("#move" + connectionColor).tooltip({
 		title: connectionHostname
 	});
+}
+
+function messagehandler_playersConnected(players) {
+	var playerList = JSON.parse(players);
+	for (var i=0; i<4; ++i) {
+		if (playerList[i]) messagehandler_playerConnected(i + "-" + playerList[i]);
+	}
 }
 
 function messagehandler_playerDisconnected(player) {

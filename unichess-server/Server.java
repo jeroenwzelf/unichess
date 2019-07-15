@@ -50,9 +50,13 @@ public class Server extends WebSocketServer {
 
 		try {
 			Message response = new Message();
+
+			response.function = "playersConnected";
+			response.argument = JSONmapper.writeValueAsString(messageHandler.getAllPlayers());
+			conn.send(JSONmapper.writeValueAsString(response));
+
 			response.function = "assignPlayer";
 			response.argument = String.valueOf(messageHandler.onNewConnection(connections.get(conn)));
-
 			conn.send(JSONmapper.writeValueAsString(response));
 
 			response.function = "playerConnected";
