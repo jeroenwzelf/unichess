@@ -24,6 +24,13 @@ function init_moveList() {
 							'<span class="HideOnSmallWidth">Oak</span>' +
 						'</span>' +
 					'</div>' +
+					'<div class="row HideOnSmallWidth">' +
+						'<span class="cell primary"></span>' +
+						'<span class="cell" id="nameWhite" style="padding:0;"></span>' +
+						'<span class="cell" id="nameIvory" style="padding:0;"></span>' +
+						'<span class="cell" id="nameBlack" style="padding:0;"></span>' +
+						'<span class="cell" id="nameOak" style="padding:0;"></span>' +
+					'</div>'
 				'</div>';
 	moveList.append(html);
 	$('#move' + playerToString(turn%4)).css("background-color", "");
@@ -111,10 +118,17 @@ function socket_set_status_connected(connected) {
 		$("#serverconnectbutton").text("Disconnect");
 		$('#socketconnectionbutton').css("color", "green");
 		$('#socketconnectiontext').text("connected");
+
+
+
+		$("#serverinfo").show();
 	}
 	else {
 		$("#serverconnectbutton").text("Connect");
 		$('#socketconnectionbutton').css("color", "red");
 		$('#socketconnectiontext').text("not connected");
+
+		$("#serverinfolog").empty();
+		$("#serverinfo").hide();
 	}
 }

@@ -15,8 +15,13 @@ public class MessageHandler {
 		return gameRoom.newPlayer(hostname);
 	}
 
-	public void onCloseConnection(String hostname) {
+	public void onCloseConnection(String hostname) throws Exception {
+		Message response = new Message();
+		response.function = "playerDisconnected";
+		response.argument = String.valueOf(gameRoom.playerWithHostname(hostname));
+
 		gameRoom.removePlayer(hostname);
+		server.broadcast(JSONmapper.writeValueAsString(response));
 	}
 
 	public void onMessage(String hostname, String jsonmessage) throws Exception {

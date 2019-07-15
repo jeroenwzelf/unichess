@@ -1,6 +1,7 @@
 public class GameRoom {
-	Server server;
-	String players[] = new String[4];
+	private Server server;
+	private String players[] = new String[4];
+	private ObjectMapper JSONmapper = new ObjectMapper();
 
 	boolean inProgress = false;
 	int turn = 0;
@@ -73,7 +74,7 @@ public class GameRoom {
 		return true;
 	}
 
-	private int playerWithHostname(String hostname) {
+	public int playerWithHostname(String hostname) {
 		for (int i=0; i<4; ++i) {
 			if (players[i] != null && players[i].equals(hostname))
 				return i;
@@ -90,9 +91,19 @@ public class GameRoom {
 
 	private void startGame() {
 		inProgress = true;
+
+		Message message = new Message();
+		message.function = "gameStateChange";
+		message.argument = "started";
+		s.broadcast(JSONmapper.writeValueAsString(message));
 	}
 
 	private void endGame() {
 		inProgress = false;
+
+		Message message = new Message();
+		message.function = "gameStateChange";
+		message.argument = "ended";
+		s.broadcast(JSONmapper.writeValueAsString(message));
 	}
 }

@@ -3,12 +3,14 @@ var turn;
 var selectedSquare;
 var playerState;
 var unmoved_pieces;
+var gameEnded;
 
 var playerColor;
 
 function initialize() {
 	init_moveList();
 	turn = 0;
+	gameEnded = false;
 	playerState = [
 		{ color: 'w', kingPos: 'h1', inCheck: false, inCheckMate: false },
 		{ color: 'i', kingPos: 'n8', inCheck: false, inCheckMate: false },
@@ -40,6 +42,7 @@ var onlineMoveDone = function(source, target) {
 }
 
 var onDragStart = function(source, piece, position, orientation) {
+	if (gameEnded) return false;
 	if (playerState[turn % 4].color !== piece[0]) return false;
 	if (websocket_state() === 1 && playerColor !== piece[0]) return false;	// if online and its not the user's turn
 	removeHighlights();

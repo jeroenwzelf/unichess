@@ -45,10 +45,14 @@ public class Server extends WebSocketServer {
 
 		try {
 			Message response = new Message();
-			response.function = "newPlayer";
+			response.function = "assignPlayer";
 			response.argument = String.valueOf(messageHandler.onNewConnection(connections.get(conn)));
 
 			conn.send(JSONmapper.writeValueAsString(response));
+
+			response.function = "playerConnected";
+			response.argument = response.argument.concat("-" + connections.get(conn));
+			broadcast(JSONmapper.writeValueAsString(response));
 		} catch (Exception ex) {
 			conn.send(ex.toString());
 		}
@@ -59,7 +63,11 @@ public class Server extends WebSocketServer {
 		String hostname = connections.get(conn);
 		connections.remove(conn);
 
-		messageHandler.onCloseConnection(hostname);
+		try {
+			messageHandler.onCloseConnection(hostname);
+		} catch (Exception ex) {
+			System.out.println(ex.toString());
+		}
 		System.out.println(hostname + " has left the room!");
 	}
 

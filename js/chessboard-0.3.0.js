@@ -486,31 +486,6 @@ function buildBoard(orientation) {
             if ( ( (j >= 3 &&j  <= 10) && (i===13) ) || ((j <  3 || j >  10) && (i===10)) )
               html += '<div class="' + CSS.notation + ' ' + CSS.numeric + '">' + row + '</div>'; break;
         }
-
-
-        /*// alpha notation
-        if ( (orientation === 'white' && ( row === 1  && (j >= 3 && j <= 10) ) || ( row === 4  && (j < 3 || j > 10) ) )
-          || (orientation === 'black' && ( row === 14 && (j >= 3 && j <= 10) ) || ( row === 11 && (j < 3 || j > 10) ) )
-          || (orientation === 'ivory' && ( row === 1  && (i >= 3 && i <= 10) ) || ( row === 4  && (i < 3 || i > 10) ) )
-          || (orientation === 'oak'   && ( row === 14 && (i >= 3 && i <= 10) ) || ( row === 11 && (i < 3 || i > 10) ) ) ) {
-          if (rotated) 
-            html += '<div class="' + CSS.notation + ' ' + CSS.numeric + '">' +
-              row + '</div>';
-          else
-            html += '<div class="' + CSS.notation + ' ' + CSS.alpha + '">' +
-              alpha[j] + '</div>';
-        }
-        
-        // numeric notation
-        if ( ( (i >= 3 && i <= 10) && (j===0) )
-          || ( (i <  3 || i >  10) && (j===3) ) ) {
-          if (rotated)
-            html += '<div class="' + CSS.notation + ' ' + CSS.alpha + '">' +
-              alpha[i] + '</div>';
-          else
-            html += '<div class="' + CSS.notation + ' ' + CSS.numeric + '">' +
-              row + '</div>';
-        }*/
       }
 
       html += '</div>'; // end .square
@@ -1284,6 +1259,8 @@ widget.orientation = function(arg) {
   if (arguments.length === 0) {
     return CURRENT_ORIENTATION;
   }
+
+  arg = arg.toLowerCase();
 
   if (arg === 'white' || arg === 'black' || arg === 'ivory' || arg === 'oak') {
     CURRENT_ORIENTATION = arg;
