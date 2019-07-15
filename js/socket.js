@@ -2,7 +2,7 @@ var connection;
 
 function websocket_connect(endpoint) {
 	if ("WebSocket" in window) {
-		connection = new WebSocket("ws://" + endpoint);
+		connection = new WebSocket("wss://" + endpoint);
 
 		connection.onopen = function() {
 			initialize();

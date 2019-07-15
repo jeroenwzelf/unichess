@@ -11,6 +11,7 @@ import org.java_websocket.WebSocketImpl;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,12 +23,18 @@ public class Server extends WebSocketServer {
 	public static void main(String args[]) throws InterruptedException, IOException {
 		int port = 8887; // 843 flash policy port
 		try {
-			port = Integer.parseInt(args[0]);
-		} catch (Exception ex) { }
+			System.out.println("q");
+			if (args.length > 0) port = Integer.parseInt(args[0]);
 
-		Server s = new Server(port);
-		System.out.println("Starting server on port: " + s.getPort());
-		s.start();
+			System.out.println("p");
+			Server s = new Server(port);
+			s.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(SSLgenerator.generate()));
+
+			System.out.println("Starting server on port: " + s.getPort());
+			s.start();
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
 	}
 
 	public Server(int port) throws UnknownHostException {
