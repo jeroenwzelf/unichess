@@ -1,3 +1,6 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+
 public class GameRoom {
 	private Server server;
 	private String players[] = new String[4];
@@ -35,8 +38,8 @@ public class GameRoom {
 	}
 
 	public boolean moveRequest(String hostname, String move) throws Exception {
-		//if (!inProgress)
-		//	throw new Exception("Game is not in progress.");
+		if (!inProgress)
+			throw new Exception("Game is not in progress.");
 
 		if (playerWithHostname(hostname) != turn % 4)
 			throw new Exception("It is not your turn.");
@@ -90,20 +93,30 @@ public class GameRoom {
 	}
 
 	private void startGame() {
+		if (inProgress) return;
 		inProgress = true;
 
-		Message message = new Message();
-		message.function = "gameStateChange";
-		message.argument = "started";
-		s.broadcast(JSONmapper.writeValueAsString(message));
+		try {
+			Message message = new Message();
+			message.function = "gameStateChange";
+			message.argument = "started";
+			server.broadcast(JSONmapper.writeValueAsString(message));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 
 	private void endGame() {
+		if (!inProgress) return;
 		inProgress = false;
 
-		Message message = new Message();
-		message.function = "gameStateChange";
-		message.argument = "ended";
-		s.broadcast(JSONmapper.writeValueAsString(message));
+		try {
+			Message message = new Message();
+			message.function = "gameStateChange";
+			message.argument = "ended";
+			server.broadcast(JSONmapper.writeValueAsString(message));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 }

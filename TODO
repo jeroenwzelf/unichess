@@ -3,9 +3,8 @@ TODO LIST
 [x] implement flip board to ivory and oak
 [x] implement flipping board to playing color when connected to a GameRoom
 [x] implement UI for waiting for players in a GameRoom
-[ ] implement hovering on a player's king will popup their hostname
+[x] implement hovering on a player's king will popup their hostname
 [x] 4 players need to be online before the game can start
-[ ] implement a GameOver UI screen
 [x] implement a GameOver server message (with possible status)
 
 
@@ -15,3 +14,4 @@ TODO LIST
 [ ] add clicking on a player's king will popup their username???
 [ ] add searching for GameRooms on local network????
 [ ] add move timer???
+[ ] implement a GameOver UI screen???

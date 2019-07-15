@@ -29,7 +29,9 @@ function websocket_connect(endpoint) {
 function websocket_disconnect() {
 	connection.close();
 	for (var i=0; i<4; ++i) {
-		var cell = $("#name" + playerToString(i)).removeClass("loading");
+		$("#name" + playerToString(i)).removeClass("loading");
+		$("#name" + playerToString(i)).text('\u274E');
+		$("#move" + playerToString(i)).tooltip('dispose');
 	}
 	gameEnded = true;
 }
@@ -50,7 +52,7 @@ function messagehandler_process(JSONmessage) {
 		case "assignPlayer": messagehandler_assignPlayer(message.argument); break;
 		case "playerConnected": messagehandler_playerConnected(message.argument); break;
 		case "playerDisconnected": messagehandler_playerDisconnected(message.argument); break;
-		case "gameStateChanged": messagehandler_gameStateChanged(message.argument); break;
+		case "gameStateChange": messagehandler_gameStateChanged(message.argument); break;
 		case "move": messagehandler_move(message.argument); break;
 		default: alert("Unsupported function: " + message.function);
 	}
@@ -63,8 +65,11 @@ function messagehandler_assignPlayer(player) {
 	$("#name" + playerName).text('\u2705' + " You");
 	board.orientation(playerName);
 
-	$("#serverinfolog").append('\u2705' + " You connected to the server as " + playerName);
+	$("#serverinfolog").append('\u2705' + " You connected to the server as " + playerName + "</br>");
 	$("#name" + playerName).removeClass("loading");
+	$("#move" + playerName).tooltip({
+		title: document.getElementById('localipaddress').textContent
+	});
 }
 
 function messagehandler_playerConnected(player) {
@@ -74,27 +79,32 @@ function messagehandler_playerConnected(player) {
 	var connectionColor = playerToString(parseInt(connection[0]));
 	var connectionHostname = connection[1];
 
-	$("#serverinfolog").append("</br>" + '\u2705 ' + connectionHostname + " connected to the server as " + connectionColor);
+	$("#serverinfolog").append('\u2705 ' + connectionHostname + " connected to the server as " + connectionColor + "</br>");
 	$("#name" + connectionColor).text('\u2705');
 	$("#name" + connectionColor).removeClass("loading");
+	$("#move" + connectionColor).tooltip({
+		title: connectionHostname
+	});
 }
 
 function messagehandler_playerDisconnected(player) {
 	var playerName = playerToString(parseInt(player));
 	$("#name" + playerName).text('\u274E');
+	$("#move" + playerName).tooltip('dispose');
 
-	$("#serverinfolog").append("</br>" + '\u274E ' + playerName + " disconnected.");
+	$("#serverinfolog").append('\u274E ' + playerName + " disconnected.</br>");
 }
 
 function messagehandler_gameStateChanged(state) {
 	switch (state) {
 		case "started": { 
 			gameEnded = false;
-			$("#serverinfolog").append("Game started!");
+			$("#serverinfolog").append("<b>Game started!</b></br>");
+			$("#serverinfowaitingforplayers").hide();
 		} break;
 		case "ended": {
-			gameEnded = true; 
-			$("#serverinfolog").append("Game ended.");
+			gameEnded = true;
+			$("#serverinfolog").append("<b>Game ended.</b></br>");
 		} break;
 	}
 }

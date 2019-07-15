@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Server extends WebSocketServer {
 	private MessageHandler messageHandler = new MessageHandler(this);
-	private HashMap<WebSocket, String> connections = new HashMap();
+	private HashMap<WebSocket, String> connections = new HashMap<WebSocket, String>();
 	private ObjectMapper JSONmapper = new ObjectMapper();
 
 	public static void main(String args[]) throws InterruptedException, IOException {

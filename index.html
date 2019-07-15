@@ -3,45 +3,46 @@
 	<head>
 		<title>Uni-Chess</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-
+		<!-- JQuery -->
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"></script>
-
+		<!-- Bootstrap -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<!-- Style Sheets -->
 		<link rel="stylesheet" href="css/chessboard-0.3.0.css">
 		<link rel="stylesheet" href="css/style.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+		<!-- Local scripts -->
 		<script type="text/javascript" src="js/chessboard-0.3.0.js"></script>
 		<script type="text/javascript" src="js/ui-logic.js"></script>
 		<script type="text/javascript" src="js/chess-logic.js"></script>
 		<script type="text/javascript" src="js/piece-logic.js"></script>
 		<script type="text/javascript" src="js/network.js"></script>
 		<script type="text/javascript" src="js/socket.js"></script>
+
 	</head>
 
 	<body>
+		<!-- Top nav -->
 		<div class="topnav" id="myTopnav">
-			<!-- <a id="hamburgerButton" style="float: right;" href="javascript:void(0);" class="icon">
-				<i class="fa fa-bars"></i>
-				<span class="HideOnSmallWidth" style="">Moves</span>
-			</a> -->
 			<a id="newgame" href="javascript:void(0);">New game</a>
 			<a id="rotateboard" href="javascript:void(0);">Rotate board</a>
 			<div style="flex: auto;"></div>
 			<a id="socketconnection" class="ui-widget ui-helper-clearfix ui-state-default ui-corner-all" href="javascript:void(0);">
-				<!-- <span class="ui-icon ui-icon-bullet" style="display:inline-block">s</span> -->
 				<span id="list"></span>
 				<span id="socketconnectionbutton" class="fa fa-circle"></span>
 				<span id="socketconnectiontext" class="HideOnSmallWidth">not connected</span>
 			</a>
 		</div>
+		<!-- Chess board + chess moves -->
 		<div style="display: flex; flex-flow: row;">
 			<div style="flex: auto;"></div>
 			<div id="board" style="width: 45%; padding: 20px;"></div>
 			<div style="flex: auto"></div>
 			<div id="MovesDiv" style="display: flex; flex-flow: column; padding-right: 0px; width: 20%; float: right;"></div>
 		</div>
-		<!-- About Popup -->
+		<!-- Server join popup -->
 		<div id="popUp" class="popUpClosed">
 			<div id="close" class="close"><i class="fa fa-times"></i></div>
 			<div id="new"><span>Online play</span></div>
@@ -54,7 +55,7 @@
 			</div>
 			<div id="serverinfo">
 				<h2 id="serverinfoconnected" style="margin: 0;">&#9989; SERVER</h2>
-				<h2 style="margin: 10px; font-style: italic;" class="loading">Waiting for other players</h2>
+				<h2 id="serverinfowaitingforplayers" style="margin: 10px; font-style: italic;" class="loading">Waiting for other players</h2>
 				<p id="serverinfolog" style="margin: 10px;"></p>
 			</div>
 			<div style="display: flex; flex-flow: row; padding: 5px;">
