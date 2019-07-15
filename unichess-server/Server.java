@@ -51,14 +51,17 @@ public class Server extends WebSocketServer {
 		try {
 			Message response = new Message();
 
+			// Send already connected players
 			response.function = "playersConnected";
 			response.argument = JSONmapper.writeValueAsString(messageHandler.getAllPlayers());
 			conn.send(JSONmapper.writeValueAsString(response));
 
+			// Assign a player number
 			response.function = "assignPlayer";
 			response.argument = String.valueOf(messageHandler.onNewConnection(connections.get(conn)));
 			conn.send(JSONmapper.writeValueAsString(response));
 
+			// Broadcast new player to other clients
 			response.function = "playerConnected";
 			response.argument = response.argument.concat("-" + connections.get(conn));
 			broadcast(JSONmapper.writeValueAsString(response));

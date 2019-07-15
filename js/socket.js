@@ -65,21 +65,22 @@ function messagehandler_assignPlayer(player) {
 	playerColor = playerState[player].color;
 	$("#name" + playerName).text('\u2705' + " You");
 	board.orientation(playerName);
-
-	$("#serverinfolog").append('\u2705' + " You connected to the server as " + playerName + "</br>");
-	$("#name" + playerName).removeClass("loading");
-	$("#move" + playerName).tooltip({
-		title: document.getElementById('localipaddress').textContent
-	});
 }
 
 function messagehandler_playerConnected(player) {
 	var connection = player.split("-");
-	if (playerColor === playerState[connection[0]].color) return;	// when a user joins, he gets a broadcast message too
-	alert(player);
 
 	var connectionColor = playerToString(parseInt(connection[0]));
 	var connectionHostname = connection[1];
+
+	if (playerColor === playerState[connection[0]].color) {
+		$("#serverinfolog").append('\u2705' + " You connected to the server as " + connectionHostname + "</br>");
+		$("#name" + connectionColor).removeClass("loading");
+		$("#move" + connectionColor).tooltip({
+			title: document.getElementById('localipaddress').textContent
+		});
+		return;
+	}
 
 	$("#serverinfolog").append('\u2705 ' + connectionHostname + " connected to the server as " + connectionColor + "</br>");
 	$("#name" + connectionColor).text('\u2705');
@@ -102,6 +103,8 @@ function messagehandler_playerDisconnected(player) {
 	$("#move" + playerName).tooltip('dispose');
 
 	$("#serverinfolog").append('\u274E ' + playerName + " disconnected.</br>");
+
+	checkmate(parseInt(player));
 }
 
 function messagehandler_gameStateChanged(state) {

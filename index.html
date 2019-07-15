@@ -48,11 +48,13 @@
 		<div id="popUp" class="popUpClosed">
 			<div id="close" class="close"><i class="fa fa-times"></i></div>
 			<div id="new"><span>Online play</span></div>
-			<h2>Join a server:</h2>
-			<div style="display: flex; flex-flow: row; padding: 10px;">
-				<input style="height: 40px; width: 190px; display: block; margin: 10px;" type="text" id="serveraddress" placeholder="xxx.xxx.xxx.xxx:port" title="IP and port of server to join">
-				<div style="display: flex; justify-content: center; align-items: center; margin: 10px">
-					<a id="serverconnectbutton" href="javascript:void(0);" class="connectbutton">Connect</a>
+			<div style="display: flex; flex-flow: column; padding: 0; align-items: center; justify-content: center;">
+				<h2>Join the only running unichess server:</h2>
+				<div style="display: flex; flex-flow: row; padding: 10px;">
+					<!-- <input style="height: 40px; width: 190px; display: block; margin: 10px;" type="text" id="serveraddress" placeholder="xxx.xxx.xxx.xxx:port" title="IP and port of server to join"> -->
+					<div style="display: flex; justify-content: center; align-items: center; margin: 10px">
+						<a id="serverconnectbutton" href="javascript:void(0);" class="connectbutton">Connect</a>
+					</div>
 				</div>
 			</div>
 			<div id="serverinfo">
@@ -106,7 +108,8 @@
 
 				$("#serverconnectbutton").click(function(e) {
 					if (websocket_state() === 1) websocket_disconnect();
-					else websocket_connect($("#serveraddress").val());
+					else websocket_connect("116.203.95.75:8887");
+					//else websocket_connect($("#serveraddress").val());
 				});
 
 				$("#close").click(function(e) {

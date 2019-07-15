@@ -36,6 +36,9 @@ public class MessageHandler {
 				functionMove(hostname, message.argument);
 				server.broadcast(jsonmessage);	// Let other players know a move has been made
 				break;
+			case "serverInfo":
+				functionServerInfo(hostname, message.argument);
+				break;
 			default: throw new IllegalArgumentException("invalid function.");
 		}
 	}
@@ -43,5 +46,9 @@ public class MessageHandler {
 	private void functionMove(String hostname, String argument) throws Exception {
 		if (!gameRoom.moveRequest(hostname, argument))
 			throw new Exception("The move was invalid.");
+	}
+
+	private void functionServerInfo(String hostname, String argument) throws Exception {
+
 	}
 }
