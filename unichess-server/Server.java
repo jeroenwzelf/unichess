@@ -23,12 +23,10 @@ public class Server extends WebSocketServer {
 	public static void main(String args[]) throws InterruptedException, IOException {
 		int port = 8887; // 843 flash policy port
 		try {
-			System.out.println("q");
 			if (args.length > 0) port = Integer.parseInt(args[0]);
 
-			System.out.println("p");
 			Server s = new Server(port);
-			s.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(SSLgenerator.generate()));
+			//s.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(SSLgenerator.generate()));
 
 			System.out.println("Starting server on port: " + s.getPort());
 			s.start();
