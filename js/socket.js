@@ -52,7 +52,7 @@ function messagehandler_newPlayer(player) {
 function messagehandler_move(move) {
 	var squares = move.split("-");
 
-	// Check if move was done by yourself
+	// Check if move was done by yourself (after doing a move, it gets broadcasted to yourself too)
 	var cell = $('#table div:last-child span[data-label="' + playerToString(getPlayerByColor(playerColor)) + '"]');
 	if (cell.html() !== squares[1])
 		onlineMoveDone(squares[0], squares[1]);

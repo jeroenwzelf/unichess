@@ -418,11 +418,11 @@ function buildBoardContainer() {
 }
 
 function buildBoard(orientation) {
-  if (orientation !== 'black') {
+  if (orientation !== 'black' && orientation !== 'ivory' && orientation !== 'oak') 
     orientation = 'white';
-  }
 
   var html = '';
+  var rotated = false;
 
   // algebraic notation / orientation
   var alpha = deepCopy(COLUMNS);
@@ -431,15 +431,27 @@ function buildBoard(orientation) {
     alpha.reverse();
     row = 1;
   }
+  if (orientation === 'ivory') {
+    row = 1;
+    rotated = true;
+  }
+  if (orientation === 'oak') {
+    rotated = true;
+    alpha.reverse();
+  }
+
 
   var squareColor = 'white';
   for (var i = 0; i < 14; i++) {
     html += '<div class="' + CSS.row + '">';
     for (var j = 0; j < 14; j++) {
-      var square = alpha[j] + row;
+      var square;
+      if (rotated) square = alpha[i] + row;
+      else square = alpha[j] + row;
 
       var csssquarecolor = CSS[squareColor];
-      if ((j < 3 || j > 10) && (i < 3 || i > 10)) csssquarecolor = '';
+      if (rotated && (i < 3 || i > 10) && (j < 3 || j > 10)) csssquarecolor = '';
+      else if (!rotated && (j < 3 || j > 10) && (i < 3 || i > 10)) csssquarecolor = '';
       html += '<div class="' + CSS.square + ' ' + csssquarecolor + ' ' +
         'square-' + square + '" ' +
         'style="width: ' + SQUARE_SIZE + 'px; height: ' + SQUARE_SIZE + 'px" ' +
@@ -448,22 +460,66 @@ function buildBoard(orientation) {
 
       if (cfg.showNotation === true) {
         // alpha notation
-        if ( (orientation === 'white' && ( row === 1  && (j >= 3 && j <= 10) ) || ( row === 4  && (j < 3 || j > 10) ) )
-          ) {
-          //|| (orientation === 'black' && ( row === 14 && (j >= 3 && j <= 10) ) || ( row === 11 && (j < 3 || j > 10) ) ) ) {
+        if ( (orientation === 'white' || orientation === 'black') &&
+          ( ( row === 1  && (j >= 3 && j <= 10) )  || ( row === 4  && (j < 3 || j > 10) )) ) {
           html += '<div class="' + CSS.notation + ' ' + CSS.alpha + '">' +
-            alpha[j] + '</div>';
+                alpha[j] + '</div>';
+        }
+        else if ( (orientation === 'ivory' || orientation === 'oak') &&
+          ( ( row === 1  && (i >= 3 && i <= 10) )  || ( row === 4  && (i < 3 || i > 10) )) ) {
+          html += '<div class="' + CSS.notation + ' ' + CSS.alpha + '">' +
+              alpha[i] + '</div>';
+        }
+
+        // numeric notation
+        switch (orientation) {
+          case 'white':
+            if ( ( (i >= 3 && i <= 10) && (j===0) ) || ((i <  3 || i >  10) && (j===3)) )
+              html += '<div class="' + CSS.notation + ' ' + CSS.numeric + '">' + row + '</div>'; break;
+          case 'black':
+            if ( ( (i >= 3 && i <= 10) && (j===13) ) || ((i <  3 || i >  10) && (j===10)) )
+              html += '<div class="' + CSS.notation + ' ' + CSS.numeric + '">' + row + '</div>'; break;
+          case 'ivory':
+            if ( ( (j >= 3 && j <= 10) && (i===0) ) || ((j <  3 || j >  10) && (i===3)) )
+              html += '<div class="' + CSS.notation + ' ' + CSS.numeric + '">' + row + '</div>'; break;
+          case 'oak':
+            if ( ( (j >= 3 &&j  <= 10) && (i===13) ) || ((j <  3 || j >  10) && (i===10)) )
+              html += '<div class="' + CSS.notation + ' ' + CSS.numeric + '">' + row + '</div>'; break;
+        }
+
+
+        /*// alpha notation
+        if ( (orientation === 'white' && ( row === 1  && (j >= 3 && j <= 10) ) || ( row === 4  && (j < 3 || j > 10) ) )
+          || (orientation === 'black' && ( row === 14 && (j >= 3 && j <= 10) ) || ( row === 11 && (j < 3 || j > 10) ) )
+          || (orientation === 'ivory' && ( row === 1  && (i >= 3 && i <= 10) ) || ( row === 4  && (i < 3 || i > 10) ) )
+          || (orientation === 'oak'   && ( row === 14 && (i >= 3 && i <= 10) ) || ( row === 11 && (i < 3 || i > 10) ) ) ) {
+          if (rotated) 
+            html += '<div class="' + CSS.notation + ' ' + CSS.numeric + '">' +
+              row + '</div>';
+          else
+            html += '<div class="' + CSS.notation + ' ' + CSS.alpha + '">' +
+              alpha[j] + '</div>';
         }
         
         // numeric notation
         if ( ( (i >= 3 && i <= 10) && (j===0) )
           || ( (i <  3 || i >  10) && (j===3) ) ) {
-          html += '<div class="' + CSS.notation + ' ' + CSS.numeric + '">' +
-            row + '</div>';
-        }
+          if (rotated)
+            html += '<div class="' + CSS.notation + ' ' + CSS.alpha + '">' +
+              alpha[i] + '</div>';
+          else
+            html += '<div class="' + CSS.notation + ' ' + CSS.numeric + '">' +
+              row + '</div>';
+        }*/
       }
 
       html += '</div>'; // end .square
+
+      switch (orientation) {
+        case 'ivory': row++; break;
+        case 'oak':   row--; break;
+        default: break;
+      }
 
       squareColor = (squareColor === 'white' ? 'black' : 'white');
     }
@@ -471,11 +527,12 @@ function buildBoard(orientation) {
 
     squareColor = (squareColor === 'white' ? 'black' : 'white');
 
-    if (orientation === 'white') {
-      row--;
-    }
-    else {
-      row++;
+    switch (orientation) {
+      case 'white': row--; break;
+      case 'black': row++; break;
+      case 'ivory': row = 1;  break;
+      case 'oak':   row = 14; break;
+      default: break;
     }
   }
 
@@ -1228,8 +1285,7 @@ widget.orientation = function(arg) {
     return CURRENT_ORIENTATION;
   }
 
-  // set to white or black
-  if (arg === 'white' || arg === 'black') {
+  if (arg === 'white' || arg === 'black' || arg === 'ivory' || arg === 'oak') {
     CURRENT_ORIENTATION = arg;
     drawBoard();
     return;
@@ -1237,7 +1293,10 @@ widget.orientation = function(arg) {
 
   // flip orientation
   if (arg === 'flip') {
-    CURRENT_ORIENTATION = (CURRENT_ORIENTATION === 'white') ? 'black' : 'white';
+    if (CURRENT_ORIENTATION === 'ivory' || CURRENT_ORIENTATION === 'oak')
+      CURRENT_ORIENTATION = (CURRENT_ORIENTATION === 'oak') ? 'ivory' : 'oak';
+    else
+      CURRENT_ORIENTATION = (CURRENT_ORIENTATION === 'white') ? 'black' : 'white';
     drawBoard();
     return;
   }
