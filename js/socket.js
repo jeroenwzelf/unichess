@@ -153,9 +153,9 @@ function messagehandler_playerConnected(player) {
 	var playerColorName = playerToString(parseInt(clientInfo.color));
 
 	$("#serverinfolog").append('\u2705 ' + clientInfo.uniqueUsername + " connected to the server as " + playerColorName + "</br>");
-	$("#name" + connectionColor).text('\u2705');
-	$("#name" + connectionColor).removeClass("loading");
-	$("#move" + connectionColor).tooltip({
+	$("#name" + playerColorName).text('\u2705');
+	$("#name" + playerColorName).removeClass("loading");
+	$("#move" + playerColorName).tooltip({
 		title: clientInfo.uniqueUsername
 	});
 }
