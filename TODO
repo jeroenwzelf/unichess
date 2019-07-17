@@ -1,17 +1,20 @@
 TODO LIST
 
+[x] identifying clients using IP address goes wrong: multiple clients can come from thesame IP. Therefore, identify them with a generated token
+	[x] add having a username???
+	[x] add clicking on a player's king will popup their username???
+[ ] more than 1 checkmate goes wrong (calculating checkmate in piece-logic.js:validMoves)
+[ ] castling can't result in a check :( -- rewrite doing moves
 [x] implement flip board to ivory and oak
 [x] implement flipping board to playing color when connected to a GameRoom
 [x] implement UI for waiting for players in a GameRoom
 [x] implement hovering on a player's king will popup their hostname
 [x] 4 players need to be online before the game can start
 [x] implement a GameOver server message (with possible status)
+[x] on disconnect, payer checkmates
+[x] on disconnect, game continues (on unichess)
 
-
-[ ] implement running server via html UI????
 [ ] add chat function???
-[ ] add having a username???
-[ ] add clicking on a player's king will popup their username???
-[ ] add searching for GameRooms on local network????
+[ ] implement running server via html UI????
 [ ] add move timer???
 [ ] implement a GameOver UI screen???

@@ -122,14 +122,24 @@ function evaluateMove(source, target, piece, newPos) {
 	removeCheckHighlights();
 	playerState = calculateInChecks(newPos);
 	for (var state in playerState) {
-		if (playerState[state].inCheck) kingcheck(playerState[state].kingPos);
+		if (playerState[state].inCheck) {
+			alert ("is in check");
+			kingcheck(playerState[state].kingPos);
+			
+			var allmoves;
+			for (var i in newPos) {
+				allmoves += validMoves(newPos, i);
+			}
+			alert(JSON.stringify(allmoves));
+
+			if (isCheckmate(newPos, playerState[state].color)) {
+				alert("is also checkmate!")
+				checkmate(state);
+			}
+		}
 	}
 
-	// check if there is still a move left to do
-	if (isCheckmate(newPos, playerState[turn % 4].color))
-		checkmate(turn % 4);
-
-	if (playerState[turn % 4].checkMate) {
+	while (playerState[turn % 4].checkMate) {
 		addMoveToMoveList("");
 		turn++;
 		updateCurrentPlayer(turn % 4);
@@ -137,6 +147,7 @@ function evaluateMove(source, target, piece, newPos) {
 }
 
 function checkmate(player) {
+	if (gameEnded) return;
 	playerState[player].checkMate = true;
 	board.changePlayerPiecesColor(playerState[player].color, 'c');
 	removeCheckHighlight(playerState[player].kingPos);

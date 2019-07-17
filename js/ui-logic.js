@@ -118,6 +118,8 @@ function socket_set_status_connected(connected) {
 		$("#serverconnectbutton").text("Disconnect");
 		$('#socketconnectionbutton').css("color", "green");
 		$('#socketconnectiontext').text("connected");
+
+		$('#username').prop('disabled', true);
 		
 		$("#serverinfowaitingforplayers").show();
 	}
@@ -125,6 +127,8 @@ function socket_set_status_connected(connected) {
 		$("#serverconnectbutton").text("Connect");
 		$('#socketconnectionbutton').css("color", "red");
 		$('#socketconnectiontext').text("not connected");
+
+		$('#username').prop('disabled', false);
 
 		$("#serverinfolog").empty();
 		$("#serverinfoconnected").empty();
