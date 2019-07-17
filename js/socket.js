@@ -1,4 +1,4 @@
-var endpoint = "localhost";
+var endpoint = "116.203.95.75";
 var port = "8887";
 
 var onlineuser;
