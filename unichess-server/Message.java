@@ -47,7 +47,7 @@ public class Message {
 	}
 
 	public static Message assignPlayerResponse(Client player) throws IOException {
-		return new Message("assignPlayer", player.toJSONString());
+		return new Message("assignPlayer", player.toJSONStringUnique());
 	}
 
 	public static Message getPlayerCountResponse(int playerCount) {

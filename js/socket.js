@@ -109,8 +109,8 @@ function websocket_state() {
 	return connection.readyState;
 }
 
-function websocket_move(move) {
-	var JSONmove = '{"function":"move", "argument":"' + move + '"}';
+function websocket_makeMove(move) {
+	var JSONmove = '{"function":"move", "argument":"' + move + ', "uniqueUsername":"' + onlineuser.uniqueUsername + '" }';
 	connection.send(JSONmove);
 }
 

@@ -49,8 +49,13 @@ public class Client {
 		return user.equals(getUniqueUsername());
 	}
 
-	public String toJSONString() throws IOException, JsonProcessingException {
+	public String toJSONStringUnique() throws IOException, JsonProcessingException {
 		ClientResource clientResource = new ClientResource(getHostname(), getUniqueUsername(), _color);
+		return JSONmapper.writeValueAsString(clientResource);
+	}
+
+	public String toJSONString() throws IOException, JsonProcessingException {
+		ClientResource clientResource = new ClientResource(getHostname(), getUsername(), _color);
 		return JSONmapper.writeValueAsString(clientResource);
 	}
 }
