@@ -1,8 +1,8 @@
 TODO LIST
 
-[ ] identifying clients using IP address goes wrong: multiple clients can come from thesame IP. Therefore, identify them with a generated token
-	[ ] add having a username???
-	[ ] add clicking on a player's king will popup their username???
+[x] identifying clients using IP address goes wrong: multiple clients can come from thesame IP. Therefore, identify them with a generated token
+	[x] add having a username???
+	[x] add clicking on a player's king will popup their username???
 [ ] more than 1 checkmate goes wrong (calculating checkmate in piece-logic.js:validMoves)
 [ ] castling can't result in a check :( -- rewrite doing moves
 [x] implement flip board to ivory and oak

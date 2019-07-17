@@ -49,11 +49,17 @@
 			<div id="close" class="close"><i class="fa fa-times"></i></div>
 			<div id="new"><span>Online play</span></div>
 			<div style="display: flex; flex-flow: column; padding: 0; align-items: center; justify-content: center;">
-				<h2>Join the only running unichess server:</h2>
-				<div style="display: flex; flex-flow: row; padding: 10px;">
-					<!-- <input style="height: 40px; width: 190px; display: block; margin: 10px;" type="text" id="serveraddress" placeholder="xxx.xxx.xxx.xxx:port" title="IP and port of server to join"> -->
+				<div style="display: flex; flex-flow: row; padding: 30px 0px 0px 0px; align-items: center; justify-content: center;">
+					<input style="height: 40px; width: 190px; display: block; margin: 0px; text-align: center" type="text" id="username" placeholder="put in a username">
+				</div>
+				<h2 style="margin: 0px">Join a game server room:</h2>
+				<div style="display: flex; flex-flow: row; padding: 10px; align-items: center; justify-content: center;">
+					<span id="serverconnectionbutton" class="fa fa-circle" style="color: orange"></span>
+					<h2 style="margin: 0">Unitron Server #1</h2>
+					<p id=serverplayercount>--</p>
+					<p>&nbsp;/ 4</p>
 					<div style="display: flex; justify-content: center; align-items: center; margin: 10px">
-						<a id="serverconnectbutton" href="javascript:void(0);" class="connectbutton">Connect</a>
+						<button id="serverconnectbutton" href="javascript:void(0);" class="connectbutton" disabled>Connect</button>
 					</div>
 				</div>
 			</div>
@@ -102,18 +108,33 @@
 				});
 
 				$("#socketconnection").click(function(e) {
-					$("#popUp").removeClass("popUpClosed");
+					if ("WebSocket" in window) {
+						$("#popUp").removeClass("popUpClosed");
+						websocket_start_peek();
+					} else alert('WebSocket is not supported on this browser!');
 					e.stopPropagation();
 				});
 
+				$('#username').click(function(e) {
+					$('#username').tooltip('dispose');
+				});
+
 				$("#serverconnectbutton").click(function(e) {
-					if (websocket_state() === 1) websocket_disconnect();
-					else websocket_connect("116.203.95.75:8887");
-					//else websocket_connect($("#serveraddress").val());
+					var username = $('#username');
+					if (!username.val() || username.val().length >= 12) {
+						username.tooltip({
+							title: "Please input a username first (max 12 characters)"
+						}).mouseover();
+					}
+					else {
+						if (websocket_state() === 1) websocket_disconnect();
+						else websocket_connect();
+					}
 				});
 
 				$("#close").click(function(e) {
 					$("#popUp").addClass("popUpClosed");
+					websocket_stop_peek();
 				});
 
 				$("#popUp").click(function(e) {
@@ -122,6 +143,7 @@
 
 				$(document).click(function(e) {
 					$("#popUp").addClass("popUpClosed");
+					websocket_stop_peek();
 				});
 			});
 		</script>

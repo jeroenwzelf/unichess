@@ -1,55 +1,77 @@
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeoutException;
+
+import org.java_websocket.WebSocket;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class GameRoom {
 	private Server server;
-	private String players[] = new String[4];
+
+	private Client players[] = new Client[4];
+	private ClientFactory clientFactory = new ClientFactory();
+
 	private ObjectMapper JSONmapper = new ObjectMapper();
 
-	boolean inProgress = false;
-	int turn = 0;
+	private boolean inProgress = false;
+	private int turn = 0;
 
 	public GameRoom(Server s) {
 		server = s;
 	}
 
-	public void removePlayer(String hostname) {
-		int player = playerWithHostname(hostname);
-		if (player == -1)
+	public Client newPlayer(WebSocket connection, String username) throws RuntimeException, TimeoutException, IOException {
+		for (int i=0; i<4; ++i) {
+			if (players[i] != null)
+				continue;
+
+			players[i] = clientFactory.createClient(connection, username);
+			players[i].setColor(i);
+			System.out.println(players[i].getUniqueUsername() + " (" + players[i].getHostname() + ") joined.");
+
+			// If 4th player connected
+			if (i == 3) startGame();
+			return players[i];
+		}
+		throw new RuntimeException("Room of " + getClass() + " is already full!");
+	}
+
+	public void removePlayer(WebSocket connection) throws JsonProcessingException {
+		Client player = getPlayer(connection);
+		if (player == null)
 			return;
 
-		players[player] = null;
+		int i = player.getColor();
+		clientFactory.invalidateUniqueId(player.getId());
+		server.broadcast(JSONmapper.writeValueAsString(Message.playerDisconnectedResponse(i)));
+		System.out.println(players[i].getUniqueUsername() + " left.");
+		players[i] = null;
 
 		// If there is either 1 or no player in the room, end the game
 		if (playerCount() < 2)
 			endGame();
 	}
 
-	public int newPlayer(String hostname) throws IllegalStateException {
-		for (int i=0; i<4; ++i) {
-			if (players[i] == null) {
-				players[i] = new String(hostname);
-
-				if (i == 3) startGame();
-				return i;
-			}
-		}
-		throw new IllegalStateException("Room is already full!");
-	}
-
-	public boolean moveRequest(String hostname, String move) throws Exception {
+	public void makeMove(String uniqueUsername, String move) throws RuntimeException, JsonProcessingException {
 		if (!inProgress)
-			throw new Exception("Game is not in progress.");
+			throw new RuntimeException("Game is not in progress.");
 
-		if (playerWithHostname(hostname) != turn % 4)
-			throw new Exception("It is not your turn.");
+		Client player = getPlayer(uniqueUsername);
+
+		if (player == null)
+			throw new RuntimeException("You are not playing the game.");
+
+		if (player.getColor() != turn % 4)
+			throw new RuntimeException("It is not your turn.");
 
 		if (!isValidMove(move))
-			throw new Exception("Argument does not contain valid squares.");
+			throw new RuntimeException("Argument does not contain valid squares.");
 
+		server.broadcast(JSONmapper.writeValueAsString(Message.makeMoveResponse(move, player.getColor())));
 		nextTurn();
-		return true;
 	}
 
 	private void nextTurn() {
@@ -78,34 +100,48 @@ public class GameRoom {
 		return true;
 	}
 
-	public int playerWithHostname(String hostname) {
-		for (int i=0; i<4; ++i) {
-			if (players[i] != null && players[i].equals(hostname))
-				return i;
-		}
-		return -1;
-	}
-
-	public String[] getAllPlayers() {
-		return players;
-	}
-
-	private int playerCount() {
-		int count = 0;
+	public Client getPlayer(String uniqueUsername) {
 		for (int i=0; i<4; ++i)
-			if (players[i] != null) ++count;
+			if (players[i] != null && players[i].equals(uniqueUsername))
+				return players[i];
+		return null;
+	}
+
+	public Client getPlayer(WebSocket connection) {
+		for (int i=0; i<4; ++i)
+			if (players[i] != null && players[i]._connection == connection)
+				return players[i];
+		return null;
+	}
+
+	public List<Client> getAllPlayers() {
+		List<Client> playerList = new ArrayList<Client>();
+
+		for (Client client : players)
+			if (client != null) playerList.add(client);
+
+		return playerList;
+	}
+
+	public int playerCount() {
+		int count = 0;
+		for (Client client : players)
+			if (client != null) ++count;
+
 		return count;
+	}
+
+	public boolean getInProgress() {
+		return inProgress;
 	}
 
 	private void startGame() {
 		if (inProgress) return;
+		System.out.println("Starting game...");
 		inProgress = true;
 
 		try {
-			Message message = new Message();
-			message.function = "gameStateChange";
-			message.argument = "started";
-			server.broadcast(JSONmapper.writeValueAsString(message));
+			server.broadcast(JSONmapper.writeValueAsString(Message.gameStateStartedResponse()));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -113,13 +149,11 @@ public class GameRoom {
 
 	private void endGame() {
 		if (!inProgress) return;
+		System.out.println("Game has ended!");
 		inProgress = false;
 
 		try {
-			Message message = new Message();
-			message.function = "gameStateChange";
-			message.argument = "ended";
-			server.broadcast(JSONmapper.writeValueAsString(message));
+			server.broadcast(JSONmapper.writeValueAsString(Message.gameStateEndedResponse()));
 		} catch (Exception e) {
 			System.out.println(e);
 		}

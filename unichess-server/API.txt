@@ -1,0 +1,25 @@
+On Request
+========================================================================================================================+
+function			|	argument	|	uniqueUsername	|	player	|	Returns											|
+------------------------------------------------------------------------------------------------------------------------|
+makeMove			|  move (d1-d2)	|	uniqueUsername	|	 null	| makeMove message with move and player (broadcast)	|
+------------------------------------------------------------------------------------------------------------------------|
+joinRoom			|	username	|		null		|	 null	| 1. playerConnected messages for existing players	|
+					|				|					|			| 2. AssignPlayer message with ClientResource 		|
+					|				|					|			| 3. playerConnected message for player (broadcast)	|
+------------------------------------------------------------------------------------------------------------------------|
+getPlayerCount		| 	  null		|		null		|	 null	| getPlayerCount message with player = playerCount	|
+========================================================================================================================+
+
+On Event
+========================================================================================================================+
+function			|	argument	|	uniqueUsername	|	player	|	Description										|
+------------------------------------------------------------------------------------------------------------------------|
+gameStateChange		|	"started"	| 		null		| 	 null	| The game has started (4 players are present)		|
+------------------------------------------------------------------------------------------------------------------------|
+gameStateChange		|	 "ended"	| 		null		| 	 null	| The game has ended (< 2 players are present)		|
+------------------------------------------------------------------------------------------------------------------------|
+playerConnected		| ClientResource|		null		|	 null	| A new player connected to the gameRoom			|
+------------------------------------------------------------------------------------------------------------------------|
+playerDisconnected	| 	  null		|		null		|	player	| A player disconnected	from the gameRoom			|
+========================================================================================================================+

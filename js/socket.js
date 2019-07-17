@@ -1,29 +1,97 @@
+var endpoint = "localhost";
+var port = "8887";
+
+var onlineuser;
+
+var polling;
+var peekconnection;
 var connection;
 
-function websocket_connect(endpoint) {
-	if ("WebSocket" in window) {
-		connection = new WebSocket("ws://" + endpoint);
+function websocket_start_peek() {
+	websocket_stop_peek();
 
-		connection.onopen = function() {
-			initialize();
-			gameEnded = true;
-			$("#serverinfoconnected").text('\u2705' + "  Connected to " + connection.url);
-			socket_set_status_connected(true);
+	if (peekconnection) peekconnection.close();
+	peekconnection = new WebSocket("ws://" + endpoint + ":" + port);
+	
+	peekconnection.onopen = function() {
+		polling = true;
+		$('#serverconnectionbutton').css("color", "orange");
+		continuous_peek();
+	};
 
-			for (var i=0; i<4; ++i) $("#name" + playerToString(i)).addClass("loading");
-		};
+	peekconnection.onclose = function(event) {
+		polling = false;
+		if (event.code === 1006)
+			$('#serverconnectionbutton').css("color", "red");
+		else $('#serverconnectionbutton').css("color", "orange");
+		$('#serverplayercount').text = "--";
+		$('#serverconnectbutton').prop('disabled', false);
+	};
 
-		connection.onmessage = function(event) { 
-			messagehandler_process(event.data);
-		};
+	peekconnection.onmessage = function(event) { 
+		$('#serverconnectionbutton').css("color", "green");
+		var message = JSON.parse(event.data);
+		switch (message.function) {
+			case "getPlayerCount": {
+				if (message.player < 4) $('#serverconnectbutton').prop('disabled', false);
+				else $('#serverconnectbutton').prop('disabled', true);
+				$('#serverplayercount').text(message.player);
+			} break;
+			case "getGameState": {
+				var connectbutton = $('#serverconnectbutton');
+				switch (message.argument) {
+					case "started":
+						connectbutton.prop('disabled', true);
+						connectbutton.tooltip({
+							title: "A game is still in progress!"
+						});
+						break;
+					case "ended":
+						connectbutton.prop('disabled', false);
+						connectbutton.tooltip('dispose');
+						break;
+				}
+			} break;
+		}
+	};
+}
 
-		connection.onclose = function(event) {
-			if (event.code === 1006)
-				alert("Connecting to websocket failed.");
-			socket_set_status_connected(false);
-		};
+function continuous_peek() {
+	if (peekconnection) {
+		peekconnection.send('{"function":"getPlayerCount"}');
+		peekconnection.send('{"function":"getGameState"}');
 	}
-	else alert('WebSocket is not supported on this browser!');
+	if (polling)
+		setTimeout(function() { continuous_peek(); }, 1000);
+}
+
+function websocket_stop_peek() {
+	if (peekconnection)
+		peekconnection.close();
+}
+
+function websocket_connect() {
+	connection = new WebSocket("ws://" + endpoint + ":" + port);
+
+	connection.onopen = function() {
+		messagehandler_joinRoom($('#username').val());
+		initialize();
+		gameEnded = true;
+		$("#serverinfoconnected").text('\u2705' + "  Connected to Unitron Server #1");
+		socket_set_status_connected(true);
+
+		for (var i=0; i<4; ++i) $("#name" + playerToString(i)).addClass("loading");
+	};
+
+	connection.onmessage = function(event) { 
+		messagehandler_process(event.data);
+	};
+
+	connection.onclose = function(event) {
+		if (event.code === 1006)
+			alert("Connecting to websocket failed.");
+		socket_set_status_connected(false);
+	};
 }
 
 function websocket_disconnect() {
@@ -51,50 +119,45 @@ function messagehandler_process(JSONmessage) {
 	switch (message.function) {
 		case "assignPlayer": messagehandler_assignPlayer(message.argument); break;
 		case "playerConnected": messagehandler_playerConnected(message.argument); break;
-		case "playersConnected": messagehandler_playersConnected(message.argument); break;
-		case "playerDisconnected": messagehandler_playerDisconnected(message.argument); break;
+		case "playerDisconnected": messagehandler_playerDisconnected(message.player); break;
 		case "gameStateChange": messagehandler_gameStateChanged(message.argument); break;
-		case "move": messagehandler_move(message.argument); break;
+		case "move": messagehandler_move(message.argument, message.player); break;
 		default: alert("Unsupported function: " + message.function);
 	}
 }
 
 function messagehandler_assignPlayer(player) {
-	var playerName = playerToString(parseInt(player));
+	onlineuser = JSON.parse(player);
+
+	playerColor = playerState[onlineuser.color].color;
+	var playerColorName = playerToString(parseInt(onlineuser.color));
+	uniqueUsername = onlineuser.uniqueUsername;
+
+	$("#serverinfolog").append('\u2705' + " You connected to the server from " + onlineuser.hostname + "</br>");
+	$("#name" + playerColorName).removeClass("loading");
+	$("#move" + playerColorName).tooltip({
+		title: onlineuser.uniqueUsername.split("@")[0]
+	});
 	
-	playerColor = playerState[player].color;
-	$("#name" + playerName).text('\u2705' + " You");
-	board.orientation(playerName);
+	$("#name" + playerColorName).text('\u2705' + " You");
+	board.orientation(playerColorName);
 }
 
 function messagehandler_playerConnected(player) {
-	var connection = player.split("-");
+	var clientInfo = JSON.parse(player);
 
-	var connectionColor = playerToString(parseInt(connection[0]));
-	var connectionHostname = connection[1];
-
-	if (playerColor === playerState[connection[0]].color) {
-		$("#serverinfolog").append('\u2705' + " You connected to the server as " + connectionHostname + "</br>");
-		$("#name" + connectionColor).removeClass("loading");
-		$("#move" + connectionColor).tooltip({
-			title: document.getElementById('localipaddress').textContent
-		});
+	// Broadcasted message about you joining the gameRoom
+	if (onlineuser && clientInfo.color == onlineuser.color)
 		return;
-	}
 
-	$("#serverinfolog").append('\u2705 ' + connectionHostname + " connected to the server as " + connectionColor + "</br>");
+	var playerColorName = playerToString(parseInt(clientInfo.color));
+
+	$("#serverinfolog").append('\u2705 ' + clientInfo.uniqueUsername + " connected to the server as " + playerColorName + "</br>");
 	$("#name" + connectionColor).text('\u2705');
 	$("#name" + connectionColor).removeClass("loading");
 	$("#move" + connectionColor).tooltip({
-		title: connectionHostname
+		title: clientInfo.uniqueUsername
 	});
-}
-
-function messagehandler_playersConnected(players) {
-	var playerList = JSON.parse(players);
-	for (var i=0; i<4; ++i) {
-		if (playerList[i]) messagehandler_playerConnected(i + "-" + playerList[i]);
-	}
 }
 
 function messagehandler_playerDisconnected(player) {
@@ -116,16 +179,21 @@ function messagehandler_gameStateChanged(state) {
 		} break;
 		case "ended": {
 			gameEnded = true;
+			alert("Game has ended!");
 			$("#serverinfolog").append("<b>Game ended.</b></br>");
 		} break;
 	}
 }
 
-function messagehandler_move(move) {
-	var squares = move.split("-");
+function messagehandler_move(move, player) {
+	// Broadcasted message about the move you made
+	if (player === onlineuser.color) return;
 
-	// Check if move was done by yourself (after doing a move, it gets broadcasted to yourself too)
-	var cell = $('#table div:last-child span[data-label="' + playerToString(getPlayerByColor(playerColor)) + '"]');
-	if (cell.html() !== squares[1])
-		onlineMoveDone(squares[0], squares[1]);
+	var squares = move.split("-");
+	onlineMoveDone(squares[0], squares[1]);
+}
+
+function messagehandler_joinRoom(username) {
+	var JSONmove = '{"function":"joinRoom", "argument":"' + username + '"}';
+	connection.send(JSONmove);	
 }

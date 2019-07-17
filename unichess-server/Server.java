@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Server extends WebSocketServer {
 	private MessageHandler messageHandler = new MessageHandler(this);
-	private HashMap<WebSocket, String> connections = new HashMap<WebSocket, String>();
 	private ObjectMapper JSONmapper = new ObjectMapper();
 
 	public static void main(String args[]) throws InterruptedException, IOException {
@@ -31,7 +30,7 @@ public class Server extends WebSocketServer {
 			System.out.println("Starting server on port: " + s.getPort());
 			s.start();
 		} catch (Exception ex) {
-			System.out.println(ex);
+			ex.printStackTrace();
 		}
 	}
 
@@ -45,60 +44,28 @@ public class Server extends WebSocketServer {
 
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
-		connections.put(conn, conn.getRemoteSocketAddress().getAddress().getHostAddress());
-		System.out.println(connections.get(conn) + " entered the room!");
-
-		try {
-			Message response = new Message();
-
-			// Send already connected players
-			response.function = "playersConnected";
-			response.argument = JSONmapper.writeValueAsString(messageHandler.getAllPlayers());
-			conn.send(JSONmapper.writeValueAsString(response));
-
-			// Assign a player number
-			response.function = "assignPlayer";
-			response.argument = String.valueOf(messageHandler.onNewConnection(connections.get(conn)));
-			conn.send(JSONmapper.writeValueAsString(response));
-
-			// Broadcast new player to other clients
-			response.function = "playerConnected";
-			response.argument = response.argument.concat("-" + connections.get(conn));
-			broadcast(JSONmapper.writeValueAsString(response));
-		} catch (Exception ex) {
-			conn.send(ex.toString());
-		}
 	}
 
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-		String hostname = connections.get(conn);
-		connections.remove(conn);
-
 		try {
-			messageHandler.onCloseConnection(hostname);
+			messageHandler.onRoomLeave(conn);
 		} catch (Exception ex) {
-			System.out.println(ex.toString());
+			ex.printStackTrace();
 		}
-		System.out.println(hostname + " has left the room!");
 	}
+
+	@Override
+	public void onMessage(WebSocket conn, ByteBuffer message) { }
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
-		String hostname = conn.getRemoteSocketAddress().getAddress().getHostAddress();
-		System.out.println(hostname + ": " + message);
 		try {
-			messageHandler.onMessage(hostname, message);
+			messageHandler.onMessage(conn, message);
 		} catch (Exception ex) {
-			System.out.println(ex);
+			ex.printStackTrace();
 			conn.send(ex.toString());
 		}
-	}
-
-	@Override
-	public void onMessage(WebSocket conn, ByteBuffer message) {
-		//broadcast(message.array());
-		//System.out.println(conn + ": " + message);
 	}
 
 	@Override
@@ -106,7 +73,6 @@ public class Server extends WebSocketServer {
 		ex.printStackTrace();
 		if (conn != null) {
 			// some errors like port binding failed may not be assignable to a specific websocket
-			System.out.println(connections.get(conn) + ": " + ex);
 		}
 	}
 

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 target=$1
-classes="GameRoom Message MessageHandler SSLgenerator Server"
 classpath=".:libs/Java-WebSocket-1.4.0-with-dependencies.jar:libs/jackson-core-2.9.9.jar:libs/jackson-databind-2.9.9.jar:libs/jackson-annotations-2.9.9.jar"
 
 cmd() {
