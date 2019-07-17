@@ -69,7 +69,7 @@ var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
 	evaluateMove(source, target, piece, newPos);
 	// if online, send move to server
 	if (websocket_state() === 1) {
-		websocket_move(source + "-" + target);
+		websocket_makeMove(source + "-" + target);
 	}
 };
 
