@@ -167,6 +167,14 @@ function messagehandler_playerDisconnected(player) {
 
 	$("#serverinfolog").append('\u274E ' + playerName + " disconnected.</br>");
 
+	if ((turn % 4) === parseInt(player)) {
+		while (playerState[turn % 4].checkMate) {
+			addMoveToMoveList("");
+			turn++;
+			updateCurrentPlayer(turn % 4);
+		}
+	}
+
 	checkmate(parseInt(player));
 }
 
