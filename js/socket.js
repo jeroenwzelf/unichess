@@ -110,7 +110,7 @@ function websocket_state() {
 }
 
 function websocket_makeMove(move) {
-	var JSONmove = '{"function":"move", "argument":"' + move + '", "uniqueUsername":"' + onlineuser.uniqueUsername + '" }';
+	var JSONmove = '{"function":"makeMove", "argument":"' + move + '", "uniqueUsername":"' + onlineuser.uniqueUsername + '" }';
 	connection.send(JSONmove);
 }
 
@@ -121,7 +121,7 @@ function messagehandler_process(JSONmessage) {
 		case "playerConnected": messagehandler_playerConnected(message.argument); break;
 		case "playerDisconnected": messagehandler_playerDisconnected(message.player); break;
 		case "gameStateChange": messagehandler_gameStateChanged(message.argument); break;
-		case "move": messagehandler_move(message.argument, message.player); break;
+		case "makeMove": messagehandler_move(message.argument, message.player); break;
 		default: alert("Unsupported function: " + message.function);
 	}
 }
