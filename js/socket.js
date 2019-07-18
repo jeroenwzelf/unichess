@@ -24,7 +24,7 @@ function websocket_start_peek() {
 		if (event.code === 1006)
 			$('#serverconnectionbutton').css("color", "red");
 		else $('#serverconnectionbutton').css("color", "orange");
-		$('#serverplayercount').text = "--";
+		$('#serverplayercount').text("--");
 		$('#serverconnectbutton').prop('disabled', false);
 	};
 
@@ -89,7 +89,7 @@ function websocket_connect() {
 
 	connection.onclose = function(event) {
 		if (event.code === 1006)
-			alert("Connecting to websocket failed.");
+			alert("Failed connecting to server.");
 		socket_set_status_connected(false);
 	};
 }
