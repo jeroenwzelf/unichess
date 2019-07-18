@@ -110,7 +110,7 @@ function websocket_state() {
 }
 
 function websocket_makeMove(move) {
-	var JSONmove = '{"function":"move", "argument":"' + move + ', "uniqueUsername":"' + onlineuser.uniqueUsername + '" }';
+	var JSONmove = '{"function":"move", "argument":"' + move + '", "uniqueUsername":"' + onlineuser.uniqueUsername + '" }';
 	connection.send(JSONmove);
 }
 
