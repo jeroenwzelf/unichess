@@ -41,10 +41,12 @@ function websocket_start_peek() {
 				var connectbutton = $('#serverconnectbutton');
 				switch (message.argument) {
 					case "started":
-						connectbutton.prop('disabled', true);
-						connectbutton.tooltip({
-							title: "A game is still in progress!"
-						});
+						if (!onlineuser) {
+							connectbutton.prop('disabled', true);
+							connectbutton.tooltip({
+								title: "A game is still in progress!"
+							});
+						}
 						break;
 					case "ended":
 						connectbutton.prop('disabled', false);
@@ -91,6 +93,7 @@ function websocket_connect() {
 		if (event.code === 1006)
 			alert("Failed connecting to server.");
 		socket_set_status_connected(false);
+		delete onlineuser;
 	};
 }
 
@@ -133,7 +136,7 @@ function messagehandler_assignPlayer(player) {
 	var playerColorName = playerToString(parseInt(onlineuser.color));
 	uniqueUsername = onlineuser.uniqueUsername;
 
-	$("#serverinfolog").append('\u2705' + " You connected to the server from " + onlineuser.hostname + "</br>");
+	$("#serverinfolog").append('\u2705' + " You (" + onlineuser.hostname + ") connected to the server as " + uniqueUsername + "</br>");
 	$("#name" + playerColorName).removeClass("loading");
 	$("#move" + playerColorName).tooltip({
 		title: onlineuser.uniqueUsername.split("@")[0]
