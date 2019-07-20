@@ -44,11 +44,10 @@ public class GameRoom {
 		if (player == null)
 			return;
 
-		int i = player.getColor();
 		clientFactory.invalidateUniqueId(player.getId());
-		server.broadcast(JSONmapper.writeValueAsString(Message.playerDisconnectedResponse(i)));
-		System.out.println(players[i].getUniqueUsername() + " left.");
-		players[i] = null;
+		server.broadcast(JSONmapper.writeValueAsString(Message.playerDisconnectedResponse(player)));
+		System.out.println(player.getUniqueUsername() + " left.");
+		players[player.getColor()] = null;
 
 		// If there is either 1 or no player in the room, end the game
 		if (playerCount() < 2)

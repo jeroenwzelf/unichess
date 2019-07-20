@@ -38,8 +38,8 @@ public class Message {
 		return new Message("makeMove", move, player);
 	}
 
-	public static Message playerDisconnectedResponse(int player) {
-		return new Message("playerDisconnected", null, player);
+	public static Message playerDisconnectedResponse(Client player) {
+		return new Message("playerDisconnected", null, player.getColor());
 	}
 
 	public static Message playerConnectedResponse(Client player) throws IOException {
@@ -60,5 +60,9 @@ public class Message {
 
 	public static Message gameStateEndedResponse() {
 		return new Message("gameStateChange", "ended");
+	}
+
+	public static Message chatResponse(String message, Client player) {
+		return new Message("chat", message, player.getColor());
 	}
 }

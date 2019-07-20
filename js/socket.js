@@ -115,8 +115,13 @@ function websocket_state() {
 }
 
 function websocket_makeMove(move) {
-	var JSONmove = '{"function":"makeMove", "argument":"' + move + '", "uniqueUsername":"' + onlineuser.uniqueUsername + '" }';
+	var JSONmove = '{"function":"makeMove", "argument":"' + move + '", "uniqueUsername":"' + onlineuser.uniqueUsername + '"}';
 	connection.send(JSONmove);
+}
+
+function websocket_sendChat(message) {
+	var JSONmessage = '{"function":"chat", "argument:"' + message + '", "uniqueUsername":"' + onlineuser.uniqueUsername + '"}';
+	connection.send(JSONmessage);
 }
 
 function messagehandler_process(JSONmessage) {
@@ -127,6 +132,7 @@ function messagehandler_process(JSONmessage) {
 		case "playerDisconnected": messagehandler_playerDisconnected(message.player); break;
 		case "gameStateChange": messagehandler_gameStateChanged(message.argument); break;
 		case "makeMove": messagehandler_move(message.argument, message.player); break;
+		case "chat": messagehandler_chat(message.argument, message.player); break;
 		default: alert("Unsupported function: " + message.function);
 	}
 }
@@ -211,4 +217,8 @@ function messagehandler_move(move, player) {
 function messagehandler_joinRoom(username) {
 	var JSONmove = '{"function":"joinRoom", "argument":"' + username + '"}';
 	connection.send(JSONmove);	
+}
+
+function messagehandler_chat(message, player) {
+	sendMessage(message, player);
 }

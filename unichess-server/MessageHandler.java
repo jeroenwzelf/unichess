@@ -19,9 +19,6 @@ public class MessageHandler {
 		Message message = JSONmapper.readValue(jsonmessage, Message.class);
 
 		switch (message.function) {
-			case "makeMove":
-				makeMove(message.uniqueUsername, message.argument);
-				break;
 			case "joinRoom":
 				onRoomJoin(connection, message.argument);
 				break;
@@ -30,6 +27,12 @@ public class MessageHandler {
 				break;
 			case "getGameState":
 				getGameState(connection);
+				break;
+			case "makeMove":
+				makeMove(message.uniqueUsername, message.argument);
+				break;
+			case "chat":
+				chat(message.argument, message.uniqueUsername);
 				break;
 			default: throw new IllegalArgumentException("invalid function.");
 		}
@@ -59,10 +62,6 @@ public class MessageHandler {
 		gameRoom.removePlayer(connection);
 	}
 
-	private void makeMove(String uniqueUsername, String move) throws IllegalArgumentException, JsonProcessingException {
-		gameRoom.makeMove(uniqueUsername, move);
-	}
-
 	private void getPlayerCount(WebSocket connection) throws JsonProcessingException {
 		connection.send(JSONmapper.writeValueAsString(Message.getPlayerCountResponse(gameRoom.playerCount())));
 	}
@@ -74,5 +73,13 @@ public class MessageHandler {
 		else response = Message.gameStateEndedResponse();
 		
 		connection.send(JSONmapper.writeValueAsString(response));
+	}
+
+	private void makeMove(String uniqueUsername, String move) throws IllegalArgumentException, JsonProcessingException {
+		gameRoom.makeMove(uniqueUsername, move);
+	}
+
+	private void chat(String message, String uniqueUsername) throws IllegalArgumentException, JsonProcessingException {
+		server.broadcast(JSONmapper.writeValueAsString(Message.chatResponse(message, gameRoom.getPlayer(uniqueUsername))));
 	}
 }

@@ -9,6 +9,8 @@ joinRoom			|	username	|		null		|	 null	| 1. playerConnected messages for existin
 					|				|					|			| 3. playerConnected message for player (broadcast)	|
 ------------------------------------------------------------------------------------------------------------------------|
 getPlayerCount		| 	  null		|		null		|	 null	| getPlayerCount message with player = playerCount	|
+------------------------------------------------------------------------------------------------------------------------|
+chat				| 	message		|	uniqueUsername	|	null	| Send new textmessage								|
 ========================================================================================================================+
 
 On Event
@@ -22,4 +24,6 @@ gameStateChange		|	 "ended"	| 		null		| 	 null	| The game has ended (< 2 players
 playerConnected		| ClientResource|		null		|	 null	| A new player connected to the gameRoom			|
 ------------------------------------------------------------------------------------------------------------------------|
 playerDisconnected	| 	  null		|		null		|	player	| A player disconnected	from the gameRoom			|
+------------------------------------------------------------------------------------------------------------------------|
+chat				| 	message		|		null		|	player	| A new textmessage from player						|
 ========================================================================================================================+
