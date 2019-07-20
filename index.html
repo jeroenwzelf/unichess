@@ -186,12 +186,14 @@
 				});
 
 				$('.send_message').click(function (e) {
-					return sendMessage(getMessageText(), getPlayerByColor(playerColor));
+					websocket_sendChat($('.message_input').val());
+					$('.message_input').val('');
 				});
 
 				$('.message_input').keyup(function (e) {
 					if (e.which === 13) {
-						return sendMessage(getMessageText(), getPlayerByColor(playerColor));
+						websocket_sendChat($('.message_input').val());
+						$('.message_input').val('');
 					}
 				});
 			});
