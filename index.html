@@ -27,7 +27,7 @@
 	<body>
 		<!-- Top nav -->
 		<div class="topnav" id="myTopnav">
-			<span id="UNICHESS_VERSION" style="padding-right: 5px; color: #555;">1.0.0</span>
+			<span id="UNICHESS_VERSION" style="padding-right: 5px; color: #555;">1.0.1</span>
 			<a id="newgame" href="javascript:void(0);">New game</a>
 			<a id="rotateboard" href="javascript:void(0);">Rotate board</a>
 			<div style="flex: auto"></div>
@@ -190,13 +190,13 @@
 				});
 
 				$('.send_message').click(function (e) {
-					websocket_sendChat($('.message_input').val());
+					websocket_sendChat(encodeURI($('.message_input').val()));
 					$('.message_input').val('');
 				});
 
 				$('.message_input').keyup(function (e) {
 					if (e.which === 13) {
-						websocket_sendChat($('.message_input').val());
+						websocket_sendChat(encodeURI($('.message_input').val()));
 						$('.message_input').val('');
 					}
 				});

@@ -220,5 +220,5 @@ function messagehandler_joinRoom(username) {
 }
 
 function messagehandler_chat(message, player) {
-	onNewChatMessage(message, player);
+	onNewChatMessage(decodeURI(message), player);
 }
