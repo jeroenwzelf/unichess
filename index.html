@@ -183,6 +183,16 @@
 					$("#popUp").addClass("popUpClosed");
 					websocket_stop_peek();
 				});
+
+				$('.send_message').click(function (e) {
+					return sendMessage(getMessageText(), getPlayerByColor(playerColor));
+				});
+
+				$('.message_input').keyup(function (e) {
+					if (e.which === 13) {
+						return sendMessage(getMessageText(), getPlayerByColor(playerColor));
+					}
+				});
 			});
 		</script>
 	</body>

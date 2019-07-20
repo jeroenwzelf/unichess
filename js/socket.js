@@ -220,6 +220,7 @@ function messagehandler_joinRoom(username) {
 }
 
 function messagehandler_chat(message, player) {
-	alert(message);
+	// Broadcasted message about the chat you sent
+	if (player === onlineuser.color) return;
 	sendMessage(message, player);
 }
