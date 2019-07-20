@@ -147,6 +147,12 @@
 					$('#username').tooltip('dispose');
 				});
 
+				$('#username').keyup(function(e){
+					if (e.keyCode == 13) {
+						$('#serverconnectbutton').click();
+					}
+				});
+
 				$("#serverconnectbutton").click(function(e) {
 					var username = $('#username');
 					if (!username.val() || username.val().length >= 12) {
