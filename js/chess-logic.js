@@ -5,6 +5,8 @@ var playerState;
 var unmoved_pieces;
 var gameEnded;
 
+var playerColor = 0;
+
 function initialize() {
 	init_moveList();
 	turn = 0;
