@@ -178,7 +178,7 @@ function messagehandler_playerDisconnected(player) {
 		}
 	}
 
-	checkmate(parseInt(player));
+	disconnect_checkmate(parseInt(player));
 }
 
 function messagehandler_gameStateChanged(state) {

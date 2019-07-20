@@ -1208,6 +1208,13 @@ widget.changePlayerPiecesColor = function(player, color) {
   drawPositionInstant();
 }
 
+widget.changePlayerPiecesColorNoKing = function(player, color) {
+  for (var i in CURRENT_POSITION) {
+    if (CURRENT_POSITION[i][0] === player && CURRENT_POSITION[i][1] != 'K') CURRENT_POSITION[i] = color + CURRENT_POSITION[i][1];
+  }
+  drawPositionInstant();
+}
+
 widget.promoteDraggedPiece = function() {
   DRAGGED_PIECE = DRAGGED_PIECE[0] + 'Q';
 }
