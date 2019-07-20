@@ -37,13 +37,18 @@
 			</a>
 		</div>
 
-		<!-- Chess board + chess moves -->
+		<!-- Chat Window + Chess board + Chess moves -->
 		<div style="display: flex; flex-flow: row;">
-			<div style="flex: auto;"></div>
+			<!-- Chat Window -->
+			<div style="flex: auto; background-color: white" class="HideOnMicroWidth">
+				yo
+			</div>
+			<!-- Chess board -->
 			<div id="board" style="width: 45%; padding: 20px;"></div>
-			<div style="flex: auto"></div>
+			<!-- Chess moves -->
 			<div id="MovesDiv" style="display: flex; flex-flow: column; padding-right: 0px; width: 20%; float: right;"></div>
 		</div>
+
 		<!-- Server join popup -->
 		<div id="popUp" class="popUpClosed">
 			<div id="close" class="close"><i class="fa fa-times"></i></div>
