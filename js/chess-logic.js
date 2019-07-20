@@ -36,11 +36,6 @@ function initialize() {
 	updateCurrentPlayer(turn);
 }
 
-var onlineMoveDone = function(source, target) {
-	var position = board.move(source + "-" + target);
-	evaluateMove(source, target, position[target], position);
-}
-
 var onDragStart = function(source, piece, position, orientation) {
 	if (gameEnded) return false;
 	if (playerState[turn % 4].color !== piece[0]) return false;
@@ -55,22 +50,27 @@ var onDragStart = function(source, piece, position, orientation) {
 	for (var i in moves) greySquare(moves[i]);
 };
 
-var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
-	if (source !== target) {
-		removeGreySquares();
-		removeHighlights();
-		selectedSquare = null;
-	}
+function chessboard_do_move(source, target, newPos) {
+	if (source === target) return;
 
-	var oldPosTarget = oldPos[target] ? oldPos[target] : ' ';
-	if ( !(validMoves(oldPos, source).includes(target)) // is not a legal move
-		) return 'snapback';
+	removeGreySquares();
+	removeHighlights();
+	selectedSquare = null;
 
-	evaluateMove(source, target, piece, newPos);
+	var position = newPos;
+	if (!position) position = board.move(source + "-" + target);
+	evaluateMove(source, target, position[target], position);
 	// if online, send move to server
 	if (websocket_state() === 1) {
 		websocket_makeMove(source + "-" + target);
 	}
+}
+
+var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
+	var oldPosTarget = oldPos[target] ? oldPos[target] : ' ';
+	if ( !(validMoves(oldPos, source).includes(target)) // is not a legal move
+		) return 'snapback';
+	chessboard_do_move(source, target, newPos);
 };
 
 function evaluateMove(source, target, piece, newPos) {

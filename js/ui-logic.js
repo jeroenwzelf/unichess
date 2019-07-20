@@ -90,10 +90,13 @@ var removeCheckHighlight = function(square) {
 
 var removeGreySquares = function() {
   $('#board .square-55d63').css('background', '');
+  $('.available-move-square').removeClass('available-move-square');
 };
 
 var greySquare = function(square) {
   var squareEl = $('#board .square-' + square);
+
+  squareEl.addClass('available-move-square');
 
   var background = '#c0ad90';
   if (squareEl.hasClass('black-3c85d') === true) {

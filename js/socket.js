@@ -211,7 +211,7 @@ function messagehandler_move(move, player) {
 	if (player === onlineuser.color) return;
 
 	var squares = move.split("-");
-	onlineMoveDone(squares[0], squares[1]);
+	chessboard_do_move(squares[0], squares[1]);
 }
 
 function messagehandler_joinRoom(username) {

@@ -24,6 +24,7 @@ function validMove(move) {
   // move should be in the form of "e2-e4", "f6-d5"
   var tmp = move.split('-');
   if (tmp.length !== 2) return false;
+  if (tmp[0] === tmp[1]) return false;
 
   return (validSquare(tmp[0]) === true && validSquare(tmp[1]) === true);
 }
@@ -1382,6 +1383,11 @@ function mousedownSquare(e) {
   if (cfg.draggable !== true) return;
 
   var square = $(this).attr('data-square');
+
+  if ($(this).hasClass('available-move-square')) {
+    var source = $('.highlight-' + (turn % 4)).attr('data-square');
+    chessboard_do_move(source, square);
+  }
 
   // no piece on this square
   if (validSquare(square) !== true ||
