@@ -346,14 +346,14 @@ a.connectbutton {
 /* Chat UI */
 
 #chatwindowpanel {
-  -webkit-transition: all 1s ease;
-  -moz-transition: all 1s ease;
-  -o-transition: all 1s ease;
-  transition: all 1s ease;
+  visibility: visible;
+  transition: all .5s ease 0s;
+  -webkit-transition: all .5s ease 0s;
 }
 
 .chatClosed {
-  margin-top: -3200px !important;
+  -webkit-transform: translate3d(-100%, 0px, 0px);
+  transform: translate3d(-100%, 0px, 0px);
 }
 
 #closeChatButton:hover {
