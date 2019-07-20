@@ -10,6 +10,7 @@
                 $('.messages').append($message);
 
                 $message.addClass('color' + _this.color);
+                alert(_this.color);
 
                 // Add king image
                 if (_this.avatar) {
@@ -41,7 +42,7 @@
             $('.message_input').val('');
             $messages = $('.messages');
 
-            message_side = playerColor === color ? 'right' : 'left';
+            message_side = getPlayerByColor(playerColor) === color ? 'right' : 'left';
 
             message = new Message({
                 text: text,
@@ -53,11 +54,11 @@
             return $messages.animate({ scrollTop: $messages.prop('scrollHeight') }, 300);
         };
         $('.send_message').click(function (e) {
-            return sendMessage(getMessageText(), playerColor);
+            return sendMessage(getMessageText(), getPlayerByColor(playerColor));
         });
         $('.message_input').keyup(function (e) {
             if (e.which === 13) {
-                return sendMessage(getMessageText(), playerColor);
+                return sendMessage(getMessageText(), getPlayerByColor(playerColor));
             }
         });
         clearMessages = function() {

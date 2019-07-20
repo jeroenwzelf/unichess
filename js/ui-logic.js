@@ -129,6 +129,7 @@ function socket_set_status_connected(connected) {
 		$('#socketconnectiontext').text("not connected");
 
 		$('#username').prop('disabled', false);
+		clearMessages();
 
 		$("#serverinfolog").empty();
 		$("#serverinfoconnected").empty();
