@@ -220,5 +220,6 @@ function messagehandler_joinRoom(username) {
 }
 
 function messagehandler_chat(message, player) {
+	alert(message);
 	sendMessage(message, player);
 }

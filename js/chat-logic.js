@@ -10,7 +10,6 @@
                 $('.messages').append($message);
 
                 $message.addClass('color' + _this.color);
-                alert(_this.color);
 
                 // Add king image
                 if (_this.avatar) {
@@ -51,6 +50,7 @@
                 avatar: !$messages.children().last().hasClass('color' + color)	// if previous message is sent by the same player, don't use the avatar again
             });
             message.draw();
+            websocket_sendChat(text);
             return $messages.animate({ scrollTop: $messages.prop('scrollHeight') }, 300);
         };
         $('.send_message').click(function (e) {
