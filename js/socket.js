@@ -120,7 +120,7 @@ function websocket_makeMove(move) {
 }
 
 function websocket_sendChat(message) {
-	var JSONmessage = '{"function":"chat", "argument:"' + message + '", "uniqueUsername":"' + onlineuser.uniqueUsername + '"}';
+	var JSONmessage = '{"function":"chat", "argument":"' + message + '", "uniqueUsername":"' + onlineuser.uniqueUsername + '"}';
 	connection.send(JSONmessage);
 }
 
