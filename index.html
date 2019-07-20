@@ -40,7 +40,7 @@
 		<!-- Chat Window + Chess board + Chess moves -->
 		<div style="display: flex; flex-flow: row;">
 			<!-- Chat Window -->
-			<div style="flex: auto; background-color: white" class="HideOnMicroWidth">
+			<div id="chatwindowpanel" style="flex: auto; background-color: white" class="HideOnMicroWidth">
 				yo
 			</div>
 			<!-- Chess board -->
@@ -143,6 +143,10 @@
 				});
 
 				$("#popUp").click(function(e) {
+					e.stopPropagation();
+				});
+
+				$("#chatwindowpanel").click(function(e) {
 					e.stopPropagation();
 				});
 
