@@ -50,7 +50,8 @@ function sendMessage(text, color) {
 		avatar: !$messages.children().last().hasClass('color' + color)	// if previous message is sent by the same player, don't use the avatar again
 	});
 	message.draw();
-	websocket_sendChat(text);
+	if (getPlayerByColor(playerColor) === color)
+		websocket_sendChat(text);
 	return $messages.animate({ scrollTop: $messages.prop('scrollHeight') }, 300);
 };
 
