@@ -19,9 +19,9 @@
 		<script type="text/javascript" src="js/ui-logic.js"></script>
 		<script type="text/javascript" src="js/chess-logic.js"></script>
 		<script type="text/javascript" src="js/piece-logic.js"></script>
+		<script type="text/javascript" src="js/chat-logic.js"></script>
 		<script type="text/javascript" src="js/network.js"></script>
 		<script type="text/javascript" src="js/socket.js"></script>
-
 	</head>
 
 	<body>
@@ -40,8 +40,31 @@
 		<!-- Chat Window + Chess board + Chess moves -->
 		<div style="display: flex; flex-flow: row;">
 			<!-- Chat Window -->
-			<div id="chatwindowpanel" style="flex: auto; background-color: white" class="HideOnMicroWidth">
-				yo
+			<div id="chatwindowpanel" style="flex: 0 0 auto; width: 30%" class="chatClosed HideOnMicroWidth">
+				<div style="flex: auto; max-height: 90vh" class="chat_window">
+					<div style="display: flex; flex-direction: row; align-items: center; padding: 20px" class="top_menu">
+						<div style="flex:auto;"></div>
+						<div class="title">Chat</div>
+						<div style="flex:auto;"></div>
+						<!-- <div id="closeChatButton" class="title">&#215;</div> -->
+					</div>
+					<ul style="height: 50vh" class="messages"></ul>
+					<div class="bottom_wrapper">
+						<div class="message_input_wrapper">
+							<input class="message_input" placeholder="Type your message here..." /></div>
+							<div class="send_message"><div class="icon"></div>
+							<div class="text">Send</div>
+						</div>
+					</div>
+				</div>
+				<div class="message_template">
+					<li class="message">
+						<div class="avatar"></div>
+						<div class="text_wrapper">
+							<div class="text"></div>
+						</div>
+					</li>
+				</div>
 			</div>
 			<!-- Chess board -->
 			<div id="board" style="width: 45%; padding: 20px;"></div>

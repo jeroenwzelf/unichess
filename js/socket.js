@@ -94,6 +94,8 @@ function websocket_connect() {
 			alert("Failed connecting to server.");
 		socket_set_status_connected(false);
 		delete onlineuser;
+
+		$('#chatwindowpanel').addClass("chatClosed");
 	};
 }
 
@@ -144,6 +146,8 @@ function messagehandler_assignPlayer(player) {
 	
 	$("#name" + playerColorName).text('\u2705' + " You");
 	board.orientation(playerColorName);
+
+	$('#chatwindowpanel').removeClass("chatClosed");
 }
 
 function messagehandler_playerConnected(player) {
