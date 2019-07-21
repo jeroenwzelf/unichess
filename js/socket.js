@@ -149,6 +149,7 @@ function messagehandler_assignPlayer(player) {
 	$("#move" + playerColorName).tooltip({
 		title: onlineuser.uniqueUsername.split("@")[0]
 	});
+	$("#move" + playerColorName).data('uniqueUsername', onlineuser.uniqueUsername.split("@")[0]);
 	
 	$("#name" + playerColorName).text('\u2705' + " You");
 	board.orientation(playerColorName);
@@ -171,6 +172,7 @@ function messagehandler_playerConnected(player) {
 	$("#move" + playerColorName).tooltip({
 		title: clientInfo.uniqueUsername
 	});
+	$("#move" + playerColorName).data('uniqueUsername', clientInfo.uniqueUsername);
 }
 
 function messagehandler_playerDisconnected(player) {

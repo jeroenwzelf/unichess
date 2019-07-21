@@ -9,11 +9,16 @@ function Message(arg) {
 
 			$message.addClass('color' + _this.color);
 
+
 			// Add king image
 			if (_this.avatar) {
-				$message.find('.avatar').prepend(
+				var avatar = $message.find('.avatar');
+				avatar.prepend(
 					'<img id="profileKingImg" style="height:100%;margin-left:auto;margin-right:auto;display:block;" src="img/chesspieces/wikipedia/' + playerState[_this.color].color + 'K.png" />'
 				);
+				avatar.tooltip({
+					title: $("#move" + playerToString(parseInt(_this.color))).data('uniqueUsername')
+				});
 			}
 
 			return setTimeout(function () {
