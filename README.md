@@ -1,2 +1,2 @@
 # unichess
-Four-player chess. If you run the unichess-server, you can have multiple clients connect to the websocket it creates and play a game online!
+A four-player chess game inspired by the game from chess.com. The difference is that here, you can play with your friends!
