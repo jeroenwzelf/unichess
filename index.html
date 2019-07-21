@@ -27,7 +27,7 @@
 	<body>
 		<!-- Top nav -->
 		<div class="topnav" id="myTopnav">
-			<span id="UNICHESS_VERSION" style="padding-right: 5px; color: #555;">1.0.1</span>
+			<img id="UNICHESS_VERSION" style="padding-right: 5px; color: #555;" height="30px" src="img/chesspieces/wikipedia/wK.png"/>
 			<a id="newgame" href="javascript:void(0);">New game</a>
 			<a id="rotateboard" href="javascript:void(0);">Rotate board</a>
 			<div style="flex: auto"></div>
@@ -106,7 +106,7 @@
 		<script>
 			$(document).ready(function() {
 				$("#UNICHESS_VERSION").tooltip({
-					title: "Unichess version"
+					title: "Unichess version: 1.0.1\n@Jeroen Donkers"
 				});
 
 				socket_set_status_connected(false);

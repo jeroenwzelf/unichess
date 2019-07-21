@@ -55,7 +55,7 @@ body {
 }
 
 /* Style the links inside the navigation bar */
-.topnav a {
+.topnav > * {
 	display: block;
 	color: #f2f2f2;
 	text-align: center;
