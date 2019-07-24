@@ -1,88 +1,11 @@
-var endpoint = "116.203.95.75";
-var port = "8887";
-
 var onlineuser;
-
-var polling;
-var peekconnection;
 var connection;
 
-function websocket_start_peek() {
-	websocket_stop_peek();
-
-	if (peekconnection) peekconnection.close();
-	peekconnection = new WebSocket("ws://" + endpoint + ":" + port);
-	
-	peekconnection.onopen = function() {
-		polling = true;
-		$('#serverconnectionbutton').css("color", "orange");
-		continuous_peek();
-	};
-
-	peekconnection.onclose = function(event) {
-		polling = false;
-		if (event.code === 1006)
-			$('#serverconnectionbutton').css("color", "red");
-		else $('#serverconnectionbutton').css("color", "orange");
-		$('#serverplayercount').text("--");
-		$('#serverconnectbutton').prop('disabled', false);
-	};
-
-	peekconnection.onmessage = function(event) { 
-		$('#serverconnectionbutton').css("color", "green");
-		var message = JSON.parse(event.data);
-		switch (message.function) {
-			case "getPlayerCount": {
-				if (message.player < 4) $('#serverconnectbutton').prop('disabled', false);
-				else $('#serverconnectbutton').prop('disabled', true);
-				$('#serverplayercount').text(message.player);
-			} break;
-			case "getGameState": {
-				var connectbutton = $('#serverconnectbutton');
-				switch (message.argument) {
-					case "started":
-						if (!onlineuser) {
-							connectbutton.prop('disabled', true);
-							connectbutton.tooltip({
-								title: "A game is still in progress!"
-							});
-						}
-						break;
-					case "ended":
-						connectbutton.prop('disabled', false);
-						connectbutton.tooltip('dispose');
-						break;
-				}
-			} break;
-		}
-	};
-}
-
-function continuous_peek() {
-	if (peekconnection) {
-		peekconnection.send('{"function":"getPlayerCount"}');
-		peekconnection.send('{"function":"getGameState"}');
-	}
-	if (polling)
-		setTimeout(function() { continuous_peek(); }, 1000);
-}
-
-function websocket_stop_peek() {
-	if (peekconnection)
-		peekconnection.close();
-}
-
-function websocket_connect() {
-	connection = new WebSocket("ws://" + endpoint + ":" + port);
+function websocket_connect(server) {
+	connection = new WebSocket("ws://" + server.endpoint + ":" + server.port);
 
 	connection.onopen = function() {
-		messagehandler_joinRoom($('#username').val());
-		initialize();
-		gameEnded = true;
-		$("#serverinfoconnected").text('\u2705' + "  Connected to Unitron Server #1");
-		socket_set_status_connected(true);
-
-		for (var i=0; i<4; ++i) $("#name" + playerToString(i)).addClass("loading");
+		ServerListUI.setConnectedToServer(server);
 	};
 
 	connection.onmessage = function(event) { 
@@ -92,10 +15,8 @@ function websocket_connect() {
 	connection.onclose = function(event) {
 		if (event.code === 1006)
 			alert("Failed connecting to server.");
-		socket_set_status_connected(false);
 		delete onlineuser;
-
-		$('#chatwindowpanel').addClass("chatClosed");
+		ServerListUI.setDisconnectedToServer(server);
 	};
 }
 
@@ -153,8 +74,6 @@ function messagehandler_assignPlayer(player) {
 	
 	$("#name" + playerColorName).text('\u2705' + " You");
 	board.orientation(playerColorName);
-
-	$('#chatwindowpanel').removeClass("chatClosed");
 }
 
 function messagehandler_playerConnected(player) {

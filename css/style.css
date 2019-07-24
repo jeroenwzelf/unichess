@@ -342,6 +342,15 @@ a.connectbutton {
   border-radius: 0.25rem;
 }
 
+/* Serverlist UI */
+
+#serverList div {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
 
 /* Chat UI */
 

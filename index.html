@@ -22,6 +22,7 @@
 		<script type="text/javascript" src="js/chat-logic.js"></script>
 		<script type="text/javascript" src="js/network.js"></script>
 		<script type="text/javascript" src="js/socket.js"></script>
+		<script type="text/javascript" src="js/ServerManager.js"></script>
 	</head>
 
 	<body>
@@ -82,15 +83,8 @@
 					<input style="height: 40px; width: 190px; display: block; margin: 0px; text-align: center" type="text" id="username" placeholder="put in a username">
 				</div>
 				<h2 style="margin: 0px">Join a game server room:</h2>
-				<div style="display: flex; flex-flow: row; padding: 10px; align-items: center; justify-content: center;">
-					<span id="serverconnectionbutton" class="fa fa-circle" style="color: orange"></span>
-					<h2 style="margin: 0">Unitron Server #1</h2>
-					<p id=serverplayercount>--</p>
-					<p>&nbsp;/ 4</p>
-					<div style="display: flex; justify-content: center; align-items: center; margin: 10px">
-						<button id="serverconnectbutton" href="javascript:void(0);" class="connectbutton" disabled>Connect</button>
-					</div>
-				</div>
+				<ul id="serverList" style="list-style-type: none; padding: 0 10px; margin: 0;">
+				</ul>
 			</div>
 			<div id="serverinfo">
 				<h2 id="serverinfoconnected" style="margin: 0;">&#9989; SERVER</h2>
@@ -98,15 +92,15 @@
 				<p id="serverinfolog" style="margin: 10px;"></p>
 			</div>
 			<div style="display: flex; flex-flow: row; padding: 5px;">
-					<div style="flex: auto"></div>
-					<p style="margin: -6px 0 0 10px; color: #777; font-size: 12px;">Local IP: </p>
-					<p id="localipaddress" style="margin: -6px 0 0 10px; color: #777; font-size: 12px;"></p>
-				</div>
+				<div style="flex: auto"></div>
+				<p style="margin: -6px 0 0 10px; color: #777; font-size: 12px;">Local IP: </p>
+				<p id="localipaddress" style="margin: -6px 0 0 10px; color: #777; font-size: 12px;"></p>
+			</div>
 		</div>
 		<script>
 			$(document).ready(function() {
 				$("#UNICHESS_VERSION").tooltip({
-					title: "Unichess version: 1.0.1\n@Jeroen Donkers"
+					title: "Unichess version: 1.0.2\n@Jeroen Donkers"
 				});
 
 				socket_set_status_connected(false);
@@ -141,11 +135,15 @@
 				});
 
 				$("#socketconnection").click(function(e) {
-					if ("WebSocket" in window) {
-						$("#popUp").removeClass("popUpClosed");
-						websocket_start_peek();
-					} else alert('WebSocket is not supported on this browser!');
-					e.stopPropagation();
+					if ($('#popUp').hasClass("popUpClosed")) {
+						if ("WebSocket" in window) {
+							$("#popUp").removeClass("popUpClosed");
+							
+							ServerManager.initialize();
+
+						} else alert('WebSocket is not supported on this browser!');
+						e.stopPropagation();
+					}
 				});
 
 				$('#username').click(function(e) {
@@ -158,22 +156,8 @@
 					}
 				});
 
-				$("#serverconnectbutton").click(function(e) {
-					var username = $('#username');
-					if (!username.val() || username.val().length >= 12) {
-						username.tooltip({
-							title: "Please input a username first (max 12 characters)"
-						}).mouseover();
-					}
-					else {
-						if (websocket_state() === 1) websocket_disconnect();
-						else websocket_connect();
-					}
-				});
-
 				$("#close").click(function(e) {
 					$("#popUp").addClass("popUpClosed");
-					websocket_stop_peek();
 				});
 
 				$("#popUp").click(function(e) {
@@ -186,7 +170,7 @@
 
 				$(document).click(function(e) {
 					$("#popUp").addClass("popUpClosed");
-					websocket_stop_peek();
+					ServerManager.clean();
 				});
 
 				$('.send_message').click(function (e) {
