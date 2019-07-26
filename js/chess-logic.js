@@ -39,7 +39,7 @@ function initialize() {
 var onDragStart = function(source, piece, position, orientation) {
 	if (gameEnded) return false;
 	if (playerState[turn % 4].color !== piece[0]) return false;
-	if (websocket_state() === 1 && playerColor !== piece[0]) return false;	// if online and its not the user's turn
+	if (OnlineGameServer.state() === 1 && playerColor !== piece[0]) return false;	// if online and its not the user's turn
 	removeHighlights();
 	removeGreySquares();
 	
@@ -61,8 +61,8 @@ function chessboard_do_move(source, target, newPos) {
 	if (!position) position = board.move(source + "-" + target);
 	evaluateMove(source, target, position[target], position);
 	// if online, send move to server
-	if (websocket_state() === 1) {
-		websocket_makeMove(source + "-" + target);
+	if (OnlineGameServer.state() === 1) {
+		OnlineGameServer.makeMove(source + "-" + target);
 	}
 }
 

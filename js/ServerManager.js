@@ -61,6 +61,10 @@ var ServerListUI = {
 
 		$("#server_button" + server.port).text("Disconnect");
 
+		$("#serverconnectbutton").text("Disconnect");
+		$('#socketconnectionbutton').css("color", "green");
+		$('#socketconnectiontext').text("connected");
+
 		WebSocketMessageHandler.joinRoom($('#username').val());
 		initialize();
 		gameEnded = true;
@@ -78,6 +82,10 @@ var ServerListUI = {
 		clearChatMessages();
 
 		$("#server_button" + server.port).text("Connect");
+
+		$("#serverconnectbutton").text("Connect");
+		$('#socketconnectionbutton').css("color", "red");
+		$('#socketconnectiontext').text("not connected");
 
 		$("#serverinfolog").empty();
 		$("#serverinfoconnected").empty();

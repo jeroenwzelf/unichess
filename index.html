@@ -21,7 +21,7 @@
 		<script type="text/javascript" src="js/piece-logic.js"></script>
 		<script type="text/javascript" src="js/chat-logic.js"></script>
 		<script type="text/javascript" src="js/network.js"></script>
-		<script type="text/javascript" src="js/socket.js"></script>
+		<script type="text/javascript" src="js/OnlineGameServer.js"></script>
 		<script type="text/javascript" src="js/ServerManager.js"></script>
 	</head>
 
@@ -139,7 +139,8 @@
 						if ("WebSocket" in window) {
 							$("#popUp").removeClass("popUpClosed");
 							
-							ServerManager.initialize();
+							if (OnlineGameServer.state() != 1)
+								ServerManager.initialize();
 
 						} else alert('WebSocket is not supported on this browser!');
 						e.stopPropagation();
@@ -170,7 +171,7 @@
 
 				$(document).click(function(e) {
 					$("#popUp").addClass("popUpClosed");
-					ServerManager.clean();
+					if (OnlineGameServer.state() != 1) ServerManager.clean();
 				});
 
 				$('.send_message').click(function (e) {
