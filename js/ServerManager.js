@@ -22,8 +22,8 @@ var ServerListUI = {
 				}).mouseover();
 			}
 			else {
-				if (websocket_state() === 1) websocket_disconnect();
-				else websocket_connect(server);
+				if (OnlineGameServer.state() === 1) OnlineGameServer.disconnect();
+				else OnlineGameServer.connect(server);
 			}
 		});
 	},
@@ -61,7 +61,7 @@ var ServerListUI = {
 
 		$("#server_button" + server.port).text("Disconnect");
 
-		messagehandler_joinRoom($('#username').val());
+		WebSocketMessageHandler.joinRoom($('#username').val());
 		initialize();
 		gameEnded = true;
 		$("#serverinfoconnected").text('\u2705' + "  Connected to Unitron Server @" + server.port);

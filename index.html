@@ -129,8 +129,8 @@
 				});
 
 				$('#newgame').click(function(e) {
-					if (websocket_state() === 1)
-						websocket_disconnect();
+					if (OnlineGameServer.state() === 1)
+						OnlineGameServer.disconnect();
 					initialize();
 				});
 
@@ -174,13 +174,13 @@
 				});
 
 				$('.send_message').click(function (e) {
-					websocket_sendChat(encodeURI($('.message_input').val()));
+					OnlineGameServer.sendChat(encodeURI($('.message_input').val()));
 					$('.message_input').val('');
 				});
 
 				$('.message_input').keyup(function (e) {
 					if (e.which === 13) {
-						websocket_sendChat(encodeURI($('.message_input').val()));
+						OnlineGameServer.sendChat(encodeURI($('.message_input').val()));
 						$('.message_input').val('');
 					}
 				});
