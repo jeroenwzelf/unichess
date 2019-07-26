@@ -75,13 +75,11 @@ var ServerListUI = {
 		$('#chatwindowpanel').removeClass("chatClosed");
 	},
 
-	setDisconnectedToServer: function(server) {
+	setDisconnectedToServer: function() {
 		ServerManager.initialize();
 
 		$('#username').prop('disabled', false);
 		clearChatMessages();
-
-		$("#server_button" + server.port).text("Connect");
 
 		$("#serverconnectbutton").text("Connect");
 		$('#socketconnectionbutton').css("color", "red");
