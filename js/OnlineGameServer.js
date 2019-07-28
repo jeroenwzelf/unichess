@@ -1,3 +1,63 @@
+/* UI */
+
+var OnlineGameUI = {
+	onConnected: function() {
+		playerColor = playerState[OnlineGameServer.onlineuser.color].color;
+		var playerColorName = playerToString(parseInt(OnlineGameServer.onlineuser.color));
+		uniqueUsername = OnlineGameServer.onlineuser.uniqueUsername;
+
+		$("#serverinfolog").append('\u2705' + " You (" + OnlineGameServer.onlineuser.hostname + ") connected to the server as " + uniqueUsername + "</br>");
+		$("#name" + playerColorName).removeClass("loading");
+		$("#move" + playerColorName).tooltip({
+			title: OnlineGameServer.onlineuser.uniqueUsername.split("@")[0]
+		});
+		$("#move" + playerColorName).data('uniqueUsername', OnlineGameServer.onlineuser.uniqueUsername.split("@")[0]);
+		
+		$("#name" + playerColorName).text('\u2705' + " You");
+		board.orientation(playerColorName);
+	},
+
+	onDisconnected: function() {
+		for (var i=0; i<4; ++i) {
+			$("#name" + playerToString(i)).removeClass("loading");
+			$("#name" + playerToString(i)).text('\u274E');
+			$("#move" + playerToString(i)).tooltip('dispose');
+		}
+	},
+
+	playerConnected: function(player) {
+		var playerColorName = playerToString(parseInt(player.color));
+
+		$("#serverinfolog").append('\u2705 ' + player.uniqueUsername + " connected to the server as " + playerColorName + "</br>");
+		$("#name" + playerColorName).text('\u2705');
+		$("#name" + playerColorName).removeClass("loading");
+		$("#move" + playerColorName).tooltip({
+			title: player.uniqueUsername
+		});
+		$("#move" + playerColorName).data('uniqueUsername', player.uniqueUsername);
+	},
+
+	playerDisconnected: function(player) {
+		var playerName = playerToString(parseInt(player));
+		$("#name" + playerName).text('\u274E');
+		$("#move" + playerName).tooltip('dispose');
+
+		$("#serverinfolog").append('\u274E ' + playerName + " disconnected.</br>");
+	},
+
+	gameStarted: function() {
+		$("#serverinfolog").append("<b>Game started!</b></br>");
+		$("#serverinfowaitingforplayers").hide();
+	},
+
+	gameEnded: function() {
+		alert("Game has ended!");
+		$("#serverinfolog").append("<b>Game ended.</b></br>");
+	}
+}
+
+/* Logic */
+
 var OnlineGameServer = {
 	connect: function(server) {
 		OnlineGameServer.websocket = new WebSocket("ws://" + server.endpoint + ":" + server.port);
@@ -13,6 +73,10 @@ var OnlineGameServer = {
 		OnlineGameServer.websocket.onclose = function(event) {
 			if (event.code === 1006)
 				alert("Failed connecting to server.");
+
+			gameEnded = true;
+			OnlineGameUI.onDisconnected();
+
 			delete OnlineGameServer.onlineuser;
 			ServerListUI.setDisconnectedToServer(server);
 		};
@@ -21,12 +85,7 @@ var OnlineGameServer = {
 	disconnect: function() {
 		if (!OnlineGameServer.websocket) return;
 		OnlineGameServer.websocket.close();
-		for (var i=0; i<4; ++i) {
-			$("#name" + playerToString(i)).removeClass("loading");
-			$("#name" + playerToString(i)).text('\u274E');
-			$("#move" + playerToString(i)).tooltip('dispose');
-		}
-		gameEnded = true;
+
 		delete OnlineGameServer.websocket;
 	},
 
@@ -64,20 +123,7 @@ var WebSocketMessageHandler = {
 
 	assignPlayer: function(player) {
 		OnlineGameServer.onlineuser = JSON.parse(player);
-
-		playerColor = playerState[OnlineGameServer.onlineuser.color].color;
-		var playerColorName = playerToString(parseInt(OnlineGameServer.onlineuser.color));
-		uniqueUsername = OnlineGameServer.onlineuser.uniqueUsername;
-
-		$("#serverinfolog").append('\u2705' + " You (" + OnlineGameServer.onlineuser.hostname + ") connected to the server as " + uniqueUsername + "</br>");
-		$("#name" + playerColorName).removeClass("loading");
-		$("#move" + playerColorName).tooltip({
-			title: OnlineGameServer.onlineuser.uniqueUsername.split("@")[0]
-		});
-		$("#move" + playerColorName).data('uniqueUsername', OnlineGameServer.onlineuser.uniqueUsername.split("@")[0]);
-		
-		$("#name" + playerColorName).text('\u2705' + " You");
-		board.orientation(playerColorName);
+		OnlineGameUI.onConnected();
 	},
 
 	playerConnected: function(player) {
@@ -87,23 +133,11 @@ var WebSocketMessageHandler = {
 		if (OnlineGameServer.onlineuser && clientInfo.color == OnlineGameServer.onlineuser.color)
 			return;
 
-		var playerColorName = playerToString(parseInt(clientInfo.color));
-
-		$("#serverinfolog").append('\u2705 ' + clientInfo.uniqueUsername + " connected to the server as " + playerColorName + "</br>");
-		$("#name" + playerColorName).text('\u2705');
-		$("#name" + playerColorName).removeClass("loading");
-		$("#move" + playerColorName).tooltip({
-			title: clientInfo.uniqueUsername
-		});
-		$("#move" + playerColorName).data('uniqueUsername', clientInfo.uniqueUsername);
+		OnlineGameUI.playerConnected(clientInfo);
 	},
 
 	playerDisconnected: function(player) {
-		var playerName = playerToString(parseInt(player));
-		$("#name" + playerName).text('\u274E');
-		$("#move" + playerName).tooltip('dispose');
-
-		$("#serverinfolog").append('\u274E ' + playerName + " disconnected.</br>");
+		OnlineGameUI.playerDisconnected(player);
 
 		if ((turn % 4) === parseInt(player)) {
 			while (playerState[turn % 4].checkMate) {
@@ -120,13 +154,11 @@ var WebSocketMessageHandler = {
 		switch (state) {
 			case "started": { 
 				gameEnded = false;
-				$("#serverinfolog").append("<b>Game started!</b></br>");
-				$("#serverinfowaitingforplayers").hide();
+				OnlineGameUI.gameStarted();
 			} break;
 			case "ended": {
 				gameEnded = true;
-				alert("Game has ended!");
-				$("#serverinfolog").append("<b>Game ended.</b></br>");
+				OnlineGameUI.gameEnded();
 			} break;
 		}
 	},

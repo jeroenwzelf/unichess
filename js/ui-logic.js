@@ -114,28 +114,3 @@ function playerToString(player) {
 		case 3: return 'Oak';
 	}
 }
-
-function socket_set_status_connected(connected) {
-	$("#serveraddress").prop('disabled', connected);
-	if (connected) {
-		$("#serverconnectbutton").text("Disconnect");
-		$('#socketconnectionbutton').css("color", "green");
-		$('#socketconnectiontext').text("connected");
-
-		$('#username').prop('disabled', true);
-		
-		$("#serverinfowaitingforplayers").show();
-	}
-	else {
-		$("#serverconnectbutton").text("Connect");
-		$('#socketconnectionbutton').css("color", "red");
-		$('#socketconnectiontext').text("not connected");
-
-		$('#username').prop('disabled', false);
-		clearChatMessages();
-
-		$("#serverinfolog").empty();
-		$("#serverinfoconnected").empty();
-		$("#serverinfowaitingforplayers").hide();
-	}
-}
